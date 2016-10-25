@@ -1,17 +1,20 @@
 # class_validation
 ## Benchmarking of metagenomic classifiers
 
-#### Classifiers:
+### Classifiers:
 
-Classifier | Database / index | Run
---- | --- | ---
-Kraken | Waiting for c4 |
-Kaiju | Built (used 194G RAM) |
-Salmon | In progress |
-Diamond | |
-Blast | |
+Classifier | Version | Database / Index | Run | License
+--- | --- | --- | --- | ---
+Kraken | 0.10.5-beta | Waiting for c4 | No | GPL3
+Kaiju | 63cc2ce* | Built (used 194G RAM) | No | GPL3
+Salmon | 0.7.2 | In progress | No | GPL3
+Diamond | 0.7.10.59 | Built | No | BSD
+Blast | 2.5.0 | In progress | No | GPL2
+Rapsearch | 2.22 | No | No | GPL3
 
-#### Databases:
+* 1.4.3 available 19th of October. The new version should be used
+
+### Databases:
 
 refseq bacteria - archea - viruses
 https://www.ncbi.nlm.nih.gov/genome/doc/ftpfaq/#protocols
@@ -31,18 +34,20 @@ find ./refseq_78_bav/ -name "*.gbff.gz" | xargs -n 1 -P 5 -i /opt/sw/kaiju/63cc2
 cat refseq_78_bav/*.gz.faa > refseq_78_bav.faa
 ```
 
-##### kaiju
+#### kaiju
 
 ```
-/opt/sw/kaiju/63cc2ce/bin/mkbwt -n 5 -e 3 -a ACDEFGHIKLMNPQRSTVWY -o kaiju_db refseq_78_bav.faa
+/opt/sw/kaiju/63cc2ce/bin/mkbwt -n 5 -e 3 -a ACDEFGHIKLMNPQRSTVWY -o kaiju refseq_78_bav.faa
 ```
 
-##### salmon
+#### salmon
+
 ```
 salmon index -t refseq_78_bav.fna -i salmon
 ```
 
-##### kraken
+#### kraken
+
 Ram problem. We might want to lower the hash size for jellyfish.
 We'll still need ~461G of RAM to put the k-mers in memory
 
@@ -51,3 +56,18 @@ kraken-build --download-taxonomy --db kraken
 kraken-build --add-to-library ../refseq_78_bav.fna --db kraken
 kraken-build --build --db kraken
 ```
+
+#### diamond
+
+```
+diamond makedb --in ../refseq_78_bav.faa -d diamond
+```
+
+#### blast
+
+```
+makeblastdb -dbtype prot -in ../refseq_78_bav.faa -title blast_protein -out blast_protein
+makeblastdb -dbtype nucl -in ../refseq_78_bav.fna -title blast_nucleotide -out blast_nucleotide
+```
+
+#### rapsearch
