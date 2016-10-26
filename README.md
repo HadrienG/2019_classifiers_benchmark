@@ -1,7 +1,17 @@
 # class_validation
 ## Benchmarking of metagenomic classifiers
 
-### Classifiers:
+### Table of Contents
+
+* [Simulating Data](#simulating-data)
+* [Classifiers Used](#classifiers)
+* [Databases](#databases)
+
+### Simulating Data
+
+*TODO*
+
+### Classifiers
 
 Classifier | Version | Database / Index | Run | License
 --- | --- | --- | --- | ---
@@ -9,12 +19,12 @@ Kraken | 0.10.5-beta | Waiting for c4 | No | GPL3
 Kaiju | 63cc2ce* | Built (used 194G RAM) | No | GPL3
 Salmon | 0.7.2 | In progress | No | GPL3
 Diamond | 0.7.10.59 | Built | No | BSD
-Blast | 2.5.0 | In progress | No | GPL2
-Rapsearch | 2.22 | No | No | GPL3
+Blast | 2.5.0 | Built | No | GPL2
+Rapsearch | 2.22 | In progress | No | GPL3
 
 * 1.4.3 available 19th of October. The new version should be used
 
-### Databases:
+### Databases
 
 refseq bacteria - archea - viruses
 https://www.ncbi.nlm.nih.gov/genome/doc/ftpfaq/#protocols
@@ -71,3 +81,7 @@ makeblastdb -dbtype nucl -in ../refseq_78_bav.fna -title blast_nucleotide -out b
 ```
 
 #### rapsearch
+
+```
+prerapsearch -d ../refseq_78_bav.fna -n rapsearch
+```
