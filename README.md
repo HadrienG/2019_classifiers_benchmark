@@ -15,12 +15,12 @@
 
 Classifier | Version | Database / Index | Run | License
 --- | --- | --- | --- | ---
-Kraken | 0.10.5-beta | Waiting for c4 | No | GPL3
+Kraken | 0.10.5-beta | Built (used 483G RAM) | No | GPL3
 Kaiju | 63cc2ce* | Built (used 194G RAM) | No | GPL3
 Salmon | 0.7.2 | In progress | No | GPL3
 Diamond | 0.7.10.59 | Built | No | BSD
 Blast | 2.5.0 | Built | No | GPL2
-Rapsearch | 2.22 | In progress | No | GPL3
+Rapsearch | 2.22 | Built | No | GPL3
 
 * 1.4.3 available 19th of October. The new version should be used
 
@@ -58,13 +58,10 @@ salmon index -t refseq_78_bav.fna -i salmon
 
 #### kraken
 
-Ram problem. We might want to lower the hash size for jellyfish.
-We'll still need ~461G of RAM to put the k-mers in memory
-
 ```
 kraken-build --download-taxonomy --db kraken
 kraken-build --add-to-library ../refseq_78_bav.fna --db kraken
-kraken-build --build --db kraken
+kraken-build --build --db kraken --jellyfish-hash-size 3032887480
 ```
 
 #### diamond
