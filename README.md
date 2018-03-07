@@ -2,9 +2,20 @@
 
 # Table of Contents
 
-* [Reduced Databases](#benchmarked-software)
 * [Software tested](#software-tested)
+* [Reduced Databases](#benchmarked-software)
 * [Datasets](#datasets)
+
+## Software tested
+
+Classifier | Version | Database | Run | License
+--- | --- | --- | --- | ---
+Blast | | | No | GPL2
+Diamond | | | No | BSD
+Kaiju | | | No | GPL3
+Kraken | | | No | GPL3
+Rapsearch | | | No | GPL3
+Salmon | | | No | GPL3
 
 ## Databases
 
@@ -15,18 +26,7 @@ We'll use a fraction of this in order to render this benchmark possible.
 - [ ] Agree on number of genomes to select (1000?)
 - [ ] Agree on selection criteria
 - [ ] Select genomes
-- [ ] Build the databases for the
-
-## Software tested
-
-Classifier | Version | Database | Run | License
---- | --- | --- | --- | ---
-Kraken | | | No | GPL3
-Kaiju | | | No | GPL3
-Salmon | | | No | GPL3
-Diamond | | | No | BSD
-Blast | | | No | GPL2
-Rapsearch | | | No | GPL3
+- [ ] Build the databases for the selected software
 
 ## Datasets
 
