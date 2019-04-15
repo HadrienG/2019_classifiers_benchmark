@@ -1,5 +1,6 @@
 docker-build:
 	cd dockerfiles && docker build -t hadrieng/blast:2.7.1 -f blast.Dockerfile .
+	cd dockerfiles && docker build -t hadrieng/centrifuge:1.0.4_beta -f centrifuge.Dockerfile .
 	cd dockerfiles && docker build -t hadrieng/diamond:0.9.24 -f diamond.Dockerfile .
 	cd dockerfiles && docker build -t hadrieng/kaiju:1.6.3 -f kaiju.Dockerfile .
 	cd dockerfiles && docker build -t hadrieng/kraken:1.1 -f kraken.Dockerfile .
@@ -13,6 +14,7 @@ docker-build:
 
 docker-push:
 	docker push hadrieng/blast:2.7.1
+	docker push hadrieng/centrifuge:1.0.4_beta
 	docker push hadrieng/diamond:0.9.24
 	docker push hadrieng/kaiju:1.6.3
 	docker push hadrieng/kraken:1.1

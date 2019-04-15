@@ -11,6 +11,7 @@
 | Classifier | Version    | Database built | Run | License |
 | ---------- | ---------- | -------------- | --- | ------- |
 | Blast      | 2.7.1      | No             | No  | GPL2    |
+| Centrifuge | 1.0.4_beta | No             | No  | GPL3    |
 | Diamond    | 0.9.24     | No             | No  | BSD     |
 | Kaiju      | 1.6.3      | No             | No  | GPL3    |
 | Kraken     | 1.1        | No             | No  | GPL3    |
