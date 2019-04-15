@@ -1,7 +1,7 @@
-name: kslam
+name: mmseqs2
 channels:
   - bioconda
   - conda-forge
   - defaults
 dependencies:
-  - k-slam=1.0
+  - mmseqs2=8.fac81

@@ -5,6 +5,7 @@ docker-build:
 	cd dockerfiles && docker build -t hadrieng/kraken:1.1 -f kraken.Dockerfile .
 	cd dockerfiles && docker build -t hadrieng/kraken2:2.0.7_beta -f kraken2.Dockerfile .
 	cd dockerfiles && docker build -t hadrieng/kslam:1.0 -f kslam.Dockerfile .
+	cd dockerfiles && docker build -t hadrieng/mmseqs2:8.fac81 -f mmseqs2.Dockerfile .
 	cd dockerfiles && docker build -t hadrieng/rapsearch:2.24 -f rapsearch.Dockerfile .
 	cd dockerfiles && docker build -t hadrieng/salmon:0.13.1 -f salmon.Dockerfile .
 
@@ -15,6 +16,7 @@ docker-push:
 	docker push hadrieng/kraken:1.1
 	docker push hadrieng/kraken2:2.0.7_beta
 	docker push hadrieng/kslam:1.0
+	docker push hadrieng/mmseqs2:8.fac81
 	docker push hadrieng/rapsearch:2.24
 	docker push hadrieng/salmon:0.13.1
 

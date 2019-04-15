@@ -16,6 +16,7 @@
 | Kraken     | 1.1        |          | No  | GPL3    |
 | Kraken     | 2.0.7_beta |          | No  | GPL3    |
 | K-slam     | 1.0        |          | No  | GPL3    |
+| Mmseqs2    | 8.fac81    |          | No  | GPL3    |
 | Rapsearch  | 2.24       |          | No  | GPL3    |
 | Salmon     | 0.13.1     |          | No  | GPL3    |
 
