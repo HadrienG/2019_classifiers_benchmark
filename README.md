@@ -8,14 +8,15 @@
 
 ## Software tested
 
-| Classifier | Version | Database | Run | License |
-| ---------- | ------- | -------- | --- | ------- |
-| Blast      | 2.7.1   |          | No  | GPL2    |
-| Diamond    | 0.9.24  |          | No  | BSD     |
-| Kaiju      | 1.6.3   |          | No  | GPL3    |
-| Kraken     |         |          | No  | GPL3    |
-| Rapsearch  |         |          | No  | GPL3    |
-| Salmon     |         |          | No  | GPL3    |
+| Classifier | Version    | Database | Run | License |
+| ---------- | ---------- | -------- | --- | ------- |
+| Blast      | 2.7.1      |          | No  | GPL2    |
+| Diamond    | 0.9.24     |          | No  | BSD     |
+| Kaiju      | 1.6.3      |          | No  | GPL3    |
+| Kraken     | 1.1        |          | No  | GPL3    |
+| Kraken     | 2.0.7_beta |          | No  | GPL3    |
+| Rapsearch  |            |          | No  | GPL3    |
+| Salmon     |            |          | No  | GPL3    |
 
 ## Databases
 
