@@ -1,0 +1,7 @@
+name: kslam
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - kslam=1.0

@@ -15,6 +15,7 @@
 | Kaiju      | 1.6.3      |          | No  | GPL3    |
 | Kraken     | 1.1        |          | No  | GPL3    |
 | Kraken     | 2.0.7_beta |          | No  | GPL3    |
+| K-slam     | 1.0        |          | No  | GPL3    |
 | Rapsearch  | 2.24       |          | No  | GPL3    |
 | Salmon     | 0.13.1     |          | No  | GPL3    |
 
