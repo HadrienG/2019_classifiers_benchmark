@@ -11,7 +11,7 @@
 | Classifier | Version | Database | Run | License |
 | ---------- | ------- | -------- | --- | ------- |
 | Blast      | 2.7.1   |          | No  | GPL2    |
-| Diamond    |         |          | No  | BSD     |
+| Diamond    | 0.9.24  |          | No  | BSD     |
 | Kaiju      |         |          | No  | GPL3    |
 | Kraken     |         |          | No  | GPL3    |
 | Rapsearch  |         |          | No  | GPL3    |
