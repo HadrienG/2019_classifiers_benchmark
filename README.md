@@ -16,7 +16,7 @@
 | Kraken     | 1.1        |          | No  | GPL3    |
 | Kraken     | 2.0.7_beta |          | No  | GPL3    |
 | Rapsearch  | 2.24       |          | No  | GPL3    |
-| Salmon     |            |          | No  | GPL3    |
+| Salmon     | 0.13.1     |          | No  | GPL3    |
 
 ## Databases
 
