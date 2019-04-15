@@ -12,7 +12,7 @@
 | ---------- | ------- | -------- | --- | ------- |
 | Blast      | 2.7.1   |          | No  | GPL2    |
 | Diamond    | 0.9.24  |          | No  | BSD     |
-| Kaiju      |         |          | No  | GPL3    |
+| Kaiju      | 1.6.3   |          | No  | GPL3    |
 | Kraken     |         |          | No  | GPL3    |
 | Rapsearch  |         |          | No  | GPL3    |
 | Salmon     |         |          | No  | GPL3    |
