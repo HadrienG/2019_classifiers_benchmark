@@ -2,20 +2,20 @@
 
 # Table of Contents
 
-* [Software tested](#software-tested)
-* [Reduced Databases](#benchmarked-software)
-* [Datasets](#datasets)
+- [Software tested](#software-tested)
+- [Reduced Databases](#benchmarked-software)
+- [Datasets](#datasets)
 
 ## Software tested
 
-Classifier | Version | Database | Run | License
---- | --- | --- | --- | ---
-Blast | | | No | GPL2
-Diamond | | | No | BSD
-Kaiju | | | No | GPL3
-Kraken | | | No | GPL3
-Rapsearch | | | No | GPL3
-Salmon | | | No | GPL3
+| Classifier | Version | Database | Run | License |
+| ---------- | ------- | -------- | --- | ------- |
+| Blast      | 2.7.1   |          | No  | GPL2    |
+| Diamond    |         |          | No  | BSD     |
+| Kaiju      |         |          | No  | GPL3    |
+| Kraken     |         |          | No  | GPL3    |
+| Rapsearch  |         |          | No  | GPL3    |
+| Salmon     |         |          | No  | GPL3    |
 
 ## Databases
 
@@ -38,5 +38,5 @@ A number of datasets will be simulated using [InSilicoSeq](https://github.com/Ha
 ## Benchmarking
 
 - X iterations with datasets:
-    - randomly drawn from the database
-    - randomly drawn from the database **and** with genomes not present in the database
+  - randomly drawn from the database
+  - randomly drawn from the database **and** with genomes not present in the database
