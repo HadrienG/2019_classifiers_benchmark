@@ -84,15 +84,12 @@ def summary(line, output_file):
     with open(output_file, "a", newline="") as csv_file:
         writer = csv.writer(csv_file, delimiter=",",
                             quotechar="|", quoting=csv.QUOTE_MINIMAL)
-        header = ["Accession", "Taxid", "Species Taxid", "Organism Name"]
-        writer.writerow(header)
-        for assembly in assemblies:
-            row = [
-                line.split("\t")[0],
-                line.split("\t")[5],
-                line.split("\t")[6],
-                line.split("\t")[7]]
-            writer.writerow(row)
+        row = [
+            line.split("\t")[5],
+            line.split("\t")[6],
+            line.split("\t")[0],
+            line.split("\t")[7]]
+        writer.writerow(row)
 
 
 def main():
