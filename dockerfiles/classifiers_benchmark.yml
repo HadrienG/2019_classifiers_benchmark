@@ -1,4 +1,4 @@
-name: benchmarks
+name: benchmark
 channels:
   - bioconda
   - conda-forge
