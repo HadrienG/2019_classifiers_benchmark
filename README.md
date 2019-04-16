@@ -23,16 +23,15 @@
 | Salmon     | 0.13.1     | No             | No  | GPL3    |
 | Sourmash   | 2.0.0      | No             | No  | BSD     |
 
+All the software have their docker image, using the same base and installed via `conda`
+
 ## Databases
 
-As of `Tue Mar 6` There are 9655 complete bacterial genomes, 13892 viral genomes and 292 archaeal genomes available in NCBI genomes, for a total of 23839 genomes.
+As of `2019-04-16` There are 13193 complete bacterial genomes, 8583 viral genomes and 283 archaeal genomes available in RefSeq complete genomes, for a total of 16877 genomes.
 
-We'll use a fraction of this in order to render this benchmark possible.
+To download them, use `make download`
 
-- [ ] Agree on number of genomes to select (1000?)
-- [ ] Agree on selection criteria
-- [ ] Select genomes
-- [ ] Build the databases for the selected software
+They'll be placed in `db`
 
 ## Datasets
 
