@@ -1,0 +1,7 @@
+name: rapsearch
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - rapsearch=2.24

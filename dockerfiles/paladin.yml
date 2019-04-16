@@ -1,0 +1,7 @@
+name: paladin
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - paladin=1.4.4

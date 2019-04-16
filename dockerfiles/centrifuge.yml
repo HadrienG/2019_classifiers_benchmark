@@ -1,0 +1,7 @@
+name: centrifuge
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - centrifuge=1.0.4_beta
