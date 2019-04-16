@@ -1,5 +1,7 @@
 # mac stuff
 .DS_Store
 
-# results
+# databases
 db/assembly_summaries.txt
+db/genomic
+db/protein
