@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 
 import os
+import csv
 import sys
 import logging
 
@@ -46,6 +47,7 @@ def listing():
 
     for summary in summaries:
         url = f"{refseq}/{summary}"
+        logger.info(f"Downloading {url}")
         download(url, output_file, append=True)
 
     return output_file
@@ -54,6 +56,8 @@ def listing():
 def download_assemblies(assembly_list):
     """download all genomes on an assembly list
     """
+    logger = logging.getLogger(__name__)
+
     os.makedirs("db/genomic", exist_ok=True)
     os.makedirs("db/protein", exist_ok=True)
     with open(assembly_list, "r") as f:
@@ -68,8 +72,27 @@ def download_assemblies(assembly_list):
                 genomic = f"{ftp_dir_path}/{assembly_name}_genomic.fna.gz"
                 protein = f"{ftp_dir_path}/{assembly_name}_protein.faa.gz"
 
+                logger.info(f"Downloading files for {assembly_name}")
                 download(genomic, f"db/genomic/{assembly_name}_genomic.fna.gz")
                 download(protein, f"db/protein/{assembly_name}_protein.faa.gz")
+                summary(line, "db/assemblies.csv")
+
+
+def summary(line, output_file):
+    """create a summary file for the downloaded genomes
+    """
+    with open(output_file, "a", newline="") as csv_file:
+        writer = csv.writer(csv_file, delimiter=",",
+                            quotechar="|", quoting=csv.QUOTE_MINIMAL)
+        header = ["Accession", "Taxid", "Species Taxid", "Organism Name"]
+        writer.writerow(header)
+        for assembly in assemblies:
+            row = [
+                line.split("\t")[0],
+                line.split("\t")[5],
+                line.split("\t")[6],
+                line.split("\t")[7]]
+            writer.writerow(row)
 
 
 def main():
