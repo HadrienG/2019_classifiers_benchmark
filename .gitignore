@@ -3,7 +3,11 @@
 
 # databases
 db/blast
+db/centrifuge
+db/diamond
+db/kaiju
 db/kraken
+db/kraken2
 # fasta and summaries
 db/genomic
 db/protein
