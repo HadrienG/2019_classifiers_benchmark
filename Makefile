@@ -1,7 +1,7 @@
-current_dir=
+workdir = $(shell pwd)
 
 download:
-	docker run -v $(pwd):/mnt/proj -it --rm hadrieng/classifiers_benchmark:0.1.0 python bin/download.py
+	docker run -v $(workdir):/mnt/proj -it --rm hadrieng/classifiers_benchmark:0.1.0 python bin/download.py
 
 docker-build:
 	cd dockerfiles && docker build -t hadrieng/classifiers_benchmark:0.1.0 -f classifiers_benchmark.Dockerfile .

@@ -27,11 +27,19 @@ All the software have their docker image, using the same base and installed via 
 
 ## Databases
 
+### Download
+
 As of `2019-04-16` There are 13193 complete bacterial genomes, 8583 viral genomes and 283 archaeal genomes available in RefSeq complete genomes, for a total of 16877 genomes.
 
 To download them, use `make download`
 
 They'll be placed in `db`
+
+A summary, `assemblies.csv` will also be created with the columns "taxid", "species_taxid", "accession" and "organism_name"
+
+### Build
+
+`make build`
 
 ## Datasets
 

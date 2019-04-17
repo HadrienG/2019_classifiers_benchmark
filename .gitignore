@@ -2,6 +2,7 @@
 .DS_Store
 
 # databases
-db/assembly_summaries.txt
 db/genomic
 db/protein
+db/assemblies.csv
+db/assembly_summaries.txt
