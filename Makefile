@@ -3,6 +3,15 @@ workdir = $(shell pwd)
 download:
 	docker run -v $(workdir):/mnt/proj -it --rm hadrieng/classifiers_benchmark:0.1.0 python bin/download.py
 
+build:
+	cd bin && nextflow run build.nf
+
+clean:
+	rm -rf work/
+	rm -rf .nextflow.log*
+	cd bin && rm -rf .nextflow.log*
+	cd bin && rm -rf work/
+
 docker-build:
 	cd dockerfiles && docker build -t hadrieng/classifiers_benchmark:0.1.0 -f classifiers_benchmark.Dockerfile .
 	cd dockerfiles && docker build -t hadrieng/blast:2.7.1 -f blast.Dockerfile .

@@ -60,6 +60,7 @@ def download_assemblies(assembly_list):
 
     os.makedirs("db/genomic", exist_ok=True)
     os.makedirs("db/protein", exist_ok=True)
+    os.makedirs("db/genbank", exist_ok=True)
     with open(assembly_list, "r") as f:
         for line in f:
             if line.startswith("#"):
@@ -68,13 +69,15 @@ def download_assemblies(assembly_list):
                 continue
             else:
                 ftp_dir_path = line.split("\t")[19]
-                assembly_name = ftp_dir_path.split("/")[-1]
+                name = ftp_dir_path.split("/")[-1]
                 genomic = f"{ftp_dir_path}/{assembly_name}_genomic.fna.gz"
                 protein = f"{ftp_dir_path}/{assembly_name}_protein.faa.gz"
+                genbank = f"{ftp_dir_path}/{assembly_name}_genomic.gbff.gz"
 
-                logger.info(f"Downloading files for {assembly_name}")
-                download(genomic, f"db/genomic/{assembly_name}_genomic.fna.gz")
-                download(protein, f"db/protein/{assembly_name}_protein.faa.gz")
+                logger.info(f"Downloading files for {name}")
+                download(genomic, f"db/genomic/{name}_genomic.fna.gz")
+                download(protein, f"db/protein/{name}_protein.faa.gz")
+                download(genbank, f"db/genbank/{name}_genomic.gbff.gz")
                 summary(line, "db/assemblies.csv")
 
 

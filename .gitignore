@@ -2,7 +2,18 @@
 .DS_Store
 
 # databases
+db/blast
+db/centrifuge
+db/diamond
+db/kaiju
+db/kraken
+db/kraken2
+db/kslam
+# fasta and summaries
 db/genomic
 db/protein
 db/assemblies.csv
 db/assembly_summaries.txt
+
+# nextflow
+.nextflow
