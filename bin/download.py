@@ -70,9 +70,9 @@ def download_assemblies(assembly_list):
             else:
                 ftp_dir_path = line.split("\t")[19]
                 name = ftp_dir_path.split("/")[-1]
-                genomic = f"{ftp_dir_path}/{assembly_name}_genomic.fna.gz"
-                protein = f"{ftp_dir_path}/{assembly_name}_protein.faa.gz"
-                genbank = f"{ftp_dir_path}/{assembly_name}_genomic.gbff.gz"
+                genomic = f"{ftp_dir_path}/{name}_genomic.fna.gz"
+                protein = f"{ftp_dir_path}/{name}_protein.faa.gz"
+                genbank = f"{ftp_dir_path}/{name}_genomic.gbff.gz"
 
                 logger.info(f"Downloading files for {name}")
                 download(genomic, f"db/genomic/{name}_genomic.fna.gz")
