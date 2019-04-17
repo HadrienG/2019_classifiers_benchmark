@@ -1,3 +1,5 @@
+current_dir=
+
 download:
 	docker run -v $(pwd):/mnt/proj -it --rm hadrieng/classifiers_benchmark:0.1.0 python bin/download.py
 
