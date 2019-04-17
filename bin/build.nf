@@ -2,6 +2,7 @@
 
 params.genomic = "../db/genomic"
 params.protein = "../db/protein"
+params.genbank = "../db/genbank"
 
 params.db = "refseq_bav"
 
@@ -65,30 +66,30 @@ process diamond {
 }
 
 // need more MEM, skipping for tests
-// process kaiju {
-//     publishDir "../db/kaiju", mode: "copy"
+process kaiju {
+    publishDir "../db/kaiju", mode: "copy"
 
-//     input:
-//         val(db) from params.db
-//         file(proteins) from file(params.protein)
-//         file(nucl_gb) from nucl_gb
+    input:
+        val(db) from params.db
+        file(proteins) from file(params.protein)
+        file(nucl_gb) from nucl_gb
 
     
-//     output:
-//         file("${db}*.fmi") into kaiju_refseq_bav
-//         file("*.dmp") into taxdump
+    output:
+        // file("${db}*.fmi") into kaiju_refseq_bav
+        file("*.dmp") into taxdump
     
-//     script:
-//         """
-//         wget ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
-//         tar xf taxdump.tar.gz
-//         zcat "${proteins}"/*.faa.gz > proteins.faa
-//         convertNR -t nodes.dmp -g "${nucl_gb}" -i proteins.faa \
-//             -a -o proteins.fasta
-//         mkbwt -a ACDEFGHIKLMNPQRSTVWY -o ${db} proteins.faa
-//         mkfmi ${db}
-//         """
-// }
+    script:
+        """
+        wget ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
+        tar xf taxdump.tar.gz
+        zcat "${proteins}"/*.faa.gz > proteins.faa
+        # convertNR -t nodes.dmp -g "${nucl_gb}" -i proteins.faa \
+        #     -a -o proteins.fasta
+        # mkbwt -a ACDEFGHIKLMNPQRSTVWY -o ${db} proteins.faa
+        # mkfmi ${db}
+        """
+}
 
 // waiting for the NCBI taxonomy
 // process kraken {
@@ -132,3 +133,20 @@ process diamond {
 //     """
 // }
 
+process kslam {
+    publishDir "../db/kslam", mode: "copy"
+
+    input:
+        val(db) from params.db
+        file("taxonomy") from taxdump
+        file(genomes) from file(params.genbank)
+
+    output:
+        file("${db}") into kslam_refseq_bav
+
+    script:
+        """
+        SLAM --parse-taxonomy "${taxonomy[0]}" "${taxonomy[1]}" --output-file taxDB
+        SLAM --output-file "${db}" --parse-genbank "${genbank}/*.gbff.gz"
+        """
+}

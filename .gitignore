@@ -8,6 +8,7 @@ db/diamond
 db/kaiju
 db/kraken
 db/kraken2
+db/kslam
 # fasta and summaries
 db/genomic
 db/protein
