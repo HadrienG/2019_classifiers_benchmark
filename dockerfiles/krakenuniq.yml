@@ -1,0 +1,7 @@
+name: krakenuniq
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - krakenuniq=0.5.7

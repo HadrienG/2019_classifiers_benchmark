@@ -17,6 +17,7 @@
 | Kaiju      | 1.6.3      | No             | No  | GPL3    |
 | Kraken     | 1.1        | No             | No  | GPL3    |
 | Kraken     | 2.0.7_beta | No             | No  | GPL3    |
+| Krakenuniq | 0.5.7      | No             | No  | GPL3    |
 | K-slam     | 1.0        | No             | No  | GPL3    |
 | Mmseqs2    | 8.fac81    | No             | No  | GPL3    |
 | Paladin    | 1.4.4      | No             | No  | MIT     |
