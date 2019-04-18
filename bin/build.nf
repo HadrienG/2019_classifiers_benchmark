@@ -192,18 +192,53 @@ process paladin {
 }
 
 process rapsearch {
-    publishDir "../db/paladin", mode: "copy"
+    publishDir "../db/rapsearch", mode: "copy"
 
     input:
         val(db) from params.db
         file(proteins) from file(params.protein)
     
     output:
-        file("${db}") into diamond_refseq_bav
+        file("${db}") into rapsearch_refseq_bav
     
     script:
         """
         zcat "${proteins}"/*.faa.gz > "${db}".faa
         prerapsearch -d "${db}".faa -n "${db}"
+        """
+}
+
+process salmon {
+publishDir "../db/salmon", mode: "copy"
+
+    input:
+        val(db) from params.db
+        file(genomes) from file(params.genomic)
+    
+    output:
+        file("${db}") into salmon_refseq_bav
+    
+    script:
+        """
+        zcat "${genomes}"/*.fna.gz > genomes.fna
+        salmon index -t genomes.fna -i "${db}"
+        """
+}
+
+process sourmash {
+publishDir "../db/sourmash", mode: "copy"
+
+    input:
+        val(db) from params.db
+        file(genomes) from file(params.genomic)
+    
+    output:
+        file("${db}") into sourmash_refseq_bav
+    
+    script:
+        """
+        zcat "${genomes}"/*.fna.gz > genomes.fna
+        sourmash compute --scaled 1000 -k 31 genomes.fna --singleton
+        mv genomes.fna.sig "${db}"
         """
 }
