@@ -42,7 +42,7 @@ process centrifuge {
         centrifuge-download -o taxonomy taxonomy
         wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz
         gzip -d nucl_gb.accession2taxid.gz
-        centrifuge-build --conversion-table nucl_gb.accession2taxid \
+        centrifuge-build -p "${task.cpus}" --conversion-table nucl_gb.accession2taxid \
             --taxonomy-tree taxonomy/nodes.dmp --name-table taxonomy/names.dmp \
             "${db}".fna "${db}"
         """
@@ -64,7 +64,7 @@ process diamond {
     script:
         """
         cat "${proteins}"/*.faa.gz > "${db}".faa.gz
-        diamond makedb --in "${db}".faa.gz --db "${db}" \
+        diamond makedb -p "${task.cpus}" --in "${db}".faa.gz --db "${db}" \
             --taxonmap prot.accession2taxid.gz --taxonnodes "${nodes}"
         """
 }
@@ -91,7 +91,7 @@ process kaiju {
         zcat "${proteins}"/*.faa.gz > proteins.faa
         # convertNR -t nodes.dmp -g "${nucl_gb}" -i proteins.faa \
         #     -a -o proteins.fasta
-        # mkbwt -a ACDEFGHIKLMNPQRSTVWY -o ${db} proteins.faa
+        # mkbwt -n "${task.cpus}" -a ACDEFGHIKLMNPQRSTVWY -o ${db} proteins.faa
         # mkfmi ${db}
         """
 }
@@ -112,7 +112,7 @@ process kaiju {
 //     kraken-build --download-taxonomy --db "${db}"
 //     find "${genomes}" -name '*.fna.gz' -print0 |\
 //         xargs -0 -I{} -n1 kraken-build --add-to-library {} --db "${db}"
-//     kraken-build --build --db "${db}"
+//     kraken-build --threads "${task.cpus}" --build --db "${db}"
 //     kraken-build --clean --db "${db}"
 //     """
 // }
@@ -133,7 +133,7 @@ process kaiju {
 //     kraken2-build --download-taxonomy --db "${db}"
 //     find "${genomes}" -name '*.fna.gz' -print0 |\
 //         xargs -0 -I{} -n1 kraken-build --add-to-library {} --db "${db}"
-//     kraken2-build --build --db "${db}"
+//     kraken2-build --threads "${task.cpus}" --build --db "${db}"
 //     kraken2-build --clean --db "${db}"
 //     """
 // }
@@ -221,7 +221,7 @@ publishDir "../db/salmon", mode: "copy"
     script:
         """
         zcat "${genomes}"/*.fna.gz > genomes.fna
-        salmon index -t genomes.fna -i "${db}"
+        salmon index -p "${task.cpus}" -t genomes.fna -i "${db}"
         """
 }
 
@@ -238,7 +238,8 @@ publishDir "../db/sourmash", mode: "copy"
     script:
         """
         zcat "${genomes}"/*.fna.gz > genomes.fna
-        sourmash compute --scaled 1000 -k 31 genomes.fna --singleton
+        sourmash compute -p "${task.cpus}" --scaled 1000 \
+            -k 31 genomes.fna --singleton
         mv genomes.fna.sig "${db}"
         """
 }
