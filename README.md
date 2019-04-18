@@ -3,8 +3,9 @@
 # Table of Contents
 
 - [Software tested](#software-tested)
-- [Reduced Databases](#benchmarked-software)
+- [Databases](#databases)
 - [Datasets](#datasets)
+- [Benchmarking](#benchmarking)
 
 ## Software tested
 

@@ -4,7 +4,7 @@ download:
 	docker run -v $(workdir):/mnt/proj -it --rm hadrieng/classifiers_benchmark:0.1.0 python bin/download.py
 
 build:
-	cd bin && nextflow run build.nf
+	cd bin && nextflow run build.nf -resume -with-report ../results/build.html
 
 clean:
 	rm -rf work/

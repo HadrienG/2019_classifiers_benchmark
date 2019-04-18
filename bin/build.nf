@@ -54,14 +54,18 @@ process diamond {
     input:
         val(db) from params.db
         file(proteins) from file(params.protein)
+        file(nodes) from nodes
     
     output:
         file("${db}*.dmnd") into diamond_refseq_bav
+        file("prot.accession2taxid.gz") into prot_gb
+        
     
     script:
         """
         cat "${proteins}"/*.faa.gz > "${db}".faa.gz
-        diamond makedb --in "${db}".faa.gz --db "${db}"
+        diamond makedb --in "${db}".faa.gz --db "${db}" \
+            --taxonmap prot.accession2taxid.gz --taxonnodes "${nodes}"
         """
 }
 
@@ -77,7 +81,8 @@ process kaiju {
     
     output:
         // file("${db}*.fmi") into kaiju_refseq_bav
-        file("*.dmp") into taxdump
+        file("nodes.dmp") into nodes
+        file("names.dmp") into names
     
     script:
         """
@@ -138,7 +143,8 @@ process kslam {
 
     input:
         val(db) from params.db
-        file("taxonomy") from taxdump
+        file(nodes) from nodes
+        file(names) from names
         file(genomes) from file(params.genbank)
 
     output:
@@ -146,7 +152,58 @@ process kslam {
 
     script:
         """
-        SLAM --parse-taxonomy "${taxonomy[0]}" "${taxonomy[1]}" --output-file taxDB
+        SLAM --parse-taxonomy "${names}" "${nodes}" --output-file taxDB
         SLAM --output-file "${db}" --parse-genbank "${genbank}/*.gbff.gz"
+        """
+}
+
+process mmseqs2 {
+    publishDir "../db/mmseqs2", mode: "copy"
+
+    input:
+        val(db) from params.db
+        file(genomes) from file(params.genomic)
+    
+    output:
+        file("${db}") into mmseqs2_refseq_bav
+    
+    script:
+        """
+        zcat "${genomes}"/*.fna.gz > genomes.fna
+        mmseqs createdb genomes.fna "${db}"
+        """
+}
+
+process paladin {
+    publishDir "../db/paladin", mode: "copy"
+
+    input:
+        val(db) from params.db
+        file(proteins) from file(params.protein)
+    
+    output:
+        file("${db}*.dmnd") into paladin_refseq_bav
+
+    script:
+        """
+        cat "${proteins}"/*.faa.gz > "${db}".faa.gz
+        paladin index "${db}".faa.gz
+        """
+}
+
+process rapsearch {
+    publishDir "../db/paladin", mode: "copy"
+
+    input:
+        val(db) from params.db
+        file(proteins) from file(params.protein)
+    
+    output:
+        file("${db}") into diamond_refseq_bav
+    
+    script:
+        """
+        zcat "${proteins}"/*.faa.gz > "${db}".faa
+        prerapsearch -d "${db}".faa -n "${db}"
         """
 }
