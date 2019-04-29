@@ -9,9 +9,15 @@ db/kaiju
 db/kraken
 db/kraken2
 db/kslam
+db/mmseqs2
+db/paladin
+db/rapsearch
+db/salmon
+db/sourmash
 # fasta and summaries
 db/genomic
 db/protein
+db/genbank
 db/assemblies.csv
 db/assembly_summaries.txt
 

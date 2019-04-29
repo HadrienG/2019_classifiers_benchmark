@@ -6,6 +6,24 @@ params.genbank = "../db/genbank"
 
 params.db = "refseq_bav"
 
+process taxonomy {
+    publishDir "../db/taxonomy", mode: "copy"
+
+    output:
+        file("taxadb/names.dmp") into names
+        file("taxadb/nodes.dmp") into nodes
+        file("taxadb/nucl_gb.accession2taxid.gz") into nucl_gb
+        file("taxadb/prot.accession2taxid.gz") into prot
+        file("taxadb.sqlite") into taxadb
+    
+    script:
+    """
+    taxadb download -f -o taxadb
+    # don't need the db right away.
+    # taxadb create --fast -i taxadb -n taxadb.sqlite
+    """
+}
+
 process blast {
     publishDir "../db/blast", mode: "copy"
 
@@ -30,18 +48,17 @@ process centrifuge {
     input:
         val(db) from params.db
         file(genomes) from file(params.genomic)
+        file(nucl) from nucl_gb
     
     output:
         file("${db}*.cf") into centrifuge_refseq_bav
-        file("nucl_gb.accession2taxid") into nucl_gb
     
     script:
         """
         cat "${genomes}"/*.fna.gz > "${db}".fna.gz
         gzip -d "${db}".fna.gz
         centrifuge-download -o taxonomy taxonomy
-        wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz
-        gzip -d nucl_gb.accession2taxid.gz
+        gzip -d "${nucl}"
         centrifuge-build -p "${task.cpus}" --conversion-table nucl_gb.accession2taxid \
             --taxonomy-tree taxonomy/nodes.dmp --name-table taxonomy/names.dmp \
             "${db}".fna "${db}"
@@ -55,6 +72,8 @@ process diamond {
         val(db) from params.db
         file(proteins) from file(params.protein)
         file(nodes) from nodes
+        file(names) from names
+        file(prot) from prot_gb
     
     output:
         file("${db}*.dmnd") into diamond_refseq_bav
@@ -65,11 +84,11 @@ process diamond {
         """
         cat "${proteins}"/*.faa.gz > "${db}".faa.gz
         diamond makedb -p "${task.cpus}" --in "${db}".faa.gz --db "${db}" \
-            --taxonmap prot.accession2taxid.gz --taxonnodes "${nodes}"
+            --taxonmap "${prot}" --taxonnodes "${names}" "${nodes}"
         """
 }
 
-// need more MEM, skipping for tests
+// need more MEM, might need to skipping for tests
 process kaiju {
     publishDir "../db/kaiju", mode: "copy"
 
@@ -77,22 +96,19 @@ process kaiju {
         val(db) from params.db
         file(proteins) from file(params.protein)
         file(nucl_gb) from nucl_gb
+        file(nodes) from nodes
 
     
     output:
-        // file("${db}*.fmi") into kaiju_refseq_bav
-        file("nodes.dmp") into nodes
-        file("names.dmp") into names
+        file("${db}*.fmi") into kaiju_refseq_bav    
     
     script:
         """
-        wget ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
-        tar xf taxdump.tar.gz
         zcat "${proteins}"/*.faa.gz > proteins.faa
-        # convertNR -t nodes.dmp -g "${nucl_gb}" -i proteins.faa \
-        #     -a -o proteins.fasta
-        # mkbwt -n "${task.cpus}" -a ACDEFGHIKLMNPQRSTVWY -o ${db} proteins.faa
-        # mkfmi ${db}
+        convertNR -t "${nodes}" -g "${nucl_gb}" -i proteins.faa \
+            -a -o proteins.fasta
+        mkbwt -n "${task.cpus}" -a ACDEFGHIKLMNPQRSTVWY -o ${db} proteins.faa
+        mkfmi ${db}
         """
 }
 
