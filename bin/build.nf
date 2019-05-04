@@ -14,11 +14,11 @@ process taxonomy {
         file("taxadb/nodes.dmp") into nodes
         file("taxadb/nucl_gb.accession2taxid.gz") into nucl_gb
         file("taxadb/prot.accession2taxid.gz") into prot
-        file("taxadb.sqlite") into taxadb
+        // file("taxadb.sqlite") into taxadb
     
     script:
     """
-    taxadb download -f -o taxadb
+    taxadb download -t full -f -o taxadb
     # don't need the db right away.
     # taxadb create --fast -i taxadb -n taxadb.sqlite
     """
@@ -58,7 +58,7 @@ process centrifuge {
         cat "${genomes}"/*.fna.gz > "${db}".fna.gz
         gzip -d "${db}".fna.gz
         centrifuge-download -o taxonomy taxonomy
-        gzip -d "${nucl}"
+        gzip -f -d "${nucl}"
         centrifuge-build -p "${task.cpus}" --conversion-table nucl_gb.accession2taxid \
             --taxonomy-tree taxonomy/nodes.dmp --name-table taxonomy/names.dmp \
             "${db}".fna "${db}"
@@ -72,23 +72,19 @@ process diamond {
         val(db) from params.db
         file(proteins) from file(params.protein)
         file(nodes) from nodes
-        file(names) from names
-        file(prot) from prot_gb
+        file(prot) from prot
     
     output:
-        file("${db}*.dmnd") into diamond_refseq_bav
-        file("prot.accession2taxid.gz") into prot_gb
-        
+        file("${db}*.dmnd") into diamond_refseq_bav        
     
     script:
         """
         cat "${proteins}"/*.faa.gz > "${db}".faa.gz
         diamond makedb -p "${task.cpus}" --in "${db}".faa.gz --db "${db}" \
-            --taxonmap "${prot}" --taxonnodes "${names}" "${nodes}"
+            --taxonmap "${prot}" --taxonnodes "${nodes}"
         """
 }
 
-// need more MEM, might need to skipping for tests
 process kaiju {
     publishDir "../db/kaiju", mode: "copy"
 
@@ -133,26 +129,25 @@ process kaiju {
 //     """
 // }
 
-// waiting for the NCBI taxonomy
-// process kraken2 {
-//     publishDir "../db/kraken2", mode: "copy"
+process kraken2 {
+    publishDir "../db/kraken2", mode: "copy"
 
-//     input:
-//     val(db) from params.db
-//     file(genomes) from file(params.genomic)
+    input:
+    val(db) from params.db
+    file(genomes) from file(params.genomic)
 
-//     output:
-//     file("${db}") into kraken2_refseq_bav
+    output:
+    file("${db}") into kraken2_refseq_bav
 
-//     script:
-//     """
-//     kraken2-build --download-taxonomy --db "${db}"
-//     find "${genomes}" -name '*.fna.gz' -print0 |\
-//         xargs -0 -I{} -n1 kraken-build --add-to-library {} --db "${db}"
-//     kraken2-build --threads "${task.cpus}" --build --db "${db}"
-//     kraken2-build --clean --db "${db}"
-//     """
-// }
+    script:
+    """
+    kraken2-build --download-taxonomy --db "${db}"
+    find "${genomes}" -name '*.fna.gz' -print0 |\
+        xargs -0 -I{} -n1 kraken-build --add-to-library {} --db "${db}"
+    kraken2-build --threads "${task.cpus}" --build --db "${db}"
+    kraken2-build --clean --db "${db}"
+    """
+}
 
 process kslam {
     publishDir "../db/kslam", mode: "copy"
@@ -169,7 +164,7 @@ process kslam {
     script:
         """
         SLAM --parse-taxonomy "${names}" "${nodes}" --output-file taxDB
-        SLAM --output-file "${db}" --parse-genbank "${genbank}/*.gbff.gz"
+        SLAM --output-file "${db}" --parse-genbank "${genomes}"/*.gbff.gz
         """
 }
 
@@ -198,12 +193,12 @@ process paladin {
         file(proteins) from file(params.protein)
     
     output:
-        file("${db}*.dmnd") into paladin_refseq_bav
+        file("${db}.*") into paladin_refseq_bav
 
     script:
         """
-        cat "${proteins}"/*.faa.gz > "${db}".faa.gz
-        paladin index "${db}".faa.gz
+        cat "${proteins}"/*.faa.gz > "${db}"
+        paladin index -r3 "${db}"
         """
 }
 

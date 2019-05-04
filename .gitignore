@@ -14,6 +14,7 @@ db/paladin
 db/rapsearch
 db/salmon
 db/sourmash
+db/taxonomy
 # fasta and summaries
 db/genomic
 db/protein
