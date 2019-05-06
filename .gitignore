@@ -15,12 +15,16 @@ db/rapsearch
 db/salmon
 db/sourmash
 db/taxonomy
+
 # fasta and summaries
 db/genomic
 db/protein
 db/genbank
 db/assemblies.csv
 db/assembly_summaries.txt
+
+# reads
+results/reads
 
 # nextflow
 .nextflow

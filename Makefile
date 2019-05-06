@@ -6,6 +6,9 @@ download:
 build:
 	cd bin && nextflow run build.nf -resume -with-report ../results/build.html
 
+simulate:
+	cd bin && nextflow run simulate.nf -resume -with-report ../results/simulation.html
+
 clean:
 	rm -rf work/
 	rm -rf .nextflow.log*
