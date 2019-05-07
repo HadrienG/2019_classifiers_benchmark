@@ -10,7 +10,11 @@ Channel
             read_pairs_diamond,
             read_pairs_kaiju,
             read_pairs_kraken,
-            read_pairs_kraken2
+            read_pairs_kraken2,
+            read_pairs_kslam,
+            read_pairs_mmseqs2,
+            read_pairs_paladin,
+            read_pairs_rapsearch
         }
 
 process blast {
@@ -121,5 +125,115 @@ process kraken2 {
             --fastq-input --threads "${task.cpus}" \
             --report "${id}_report.txt"
             --paired "${read1}" "${read2}"
+        """
+}
+
+process kslam {
+    publishDir "../results/kslam", mode: "copy"
+
+    input:
+        set val(id), file(read1), file(read2) from read_pairs_kslam
+
+    output:
+        file("*.tab") into kslam_output
+
+    script:
+        """
+        SLAM --db=../db/kslam/refseq_bav --output-file="${id}.tab" "${read1}" "${read2}"
+        """
+}
+
+process mmseqs2 {
+    publishDir "../results/mmseqs2", mode: "copy"
+
+    input:
+        set val(id), file(read1), file(read2) from read_pairs_mmseqs2
+
+    output:
+        file("*.tab") into mmseqs2_output
+
+    script:
+        """
+        mkdir tmp1
+        mmseqs easy-search "${read1}" ../db/mmseqs2/refseq_bav \
+            "${id}_R1.tab" tmp1 --search-type 3 --threads "${task.cpus}"
+        mkdir tmp2
+        mmseqs easy-search "${read2}" ../db/mmseqs2/refseq_bav \
+            "${id}_R2.tab" tmp2 --search-type 3 --threads "${task.cpus}"
+        """
+}
+
+process paladin {
+    publishDir "../results/paladin", mode: "copy"
+
+    input:
+        set val(id), file(read1), file(read2) from read_pairs_paladin
+
+    output:
+        file("*.tsv") into paladin_output
+
+    script:
+        """
+        paladin align -f 100 -t "${task.cpus}" -o "${id}_R1" \
+            ../db/paladin/refseq_bav "${read1}"
+        paladin align -f 100 -t "${task.cpus}" -o "${id}_R2" \
+            ../db/paladin/refseq_bav "${read2}"
+        """
+}
+
+process rapsearch {
+    publishDir "../results/rapsearch", mode: "copy"
+
+    input:
+        set val(id), file(read1), file(read2) from read_pairs_rapsearch
+
+    output:
+        file("*.txt") into rapsearch_output
+
+    script:
+        """
+        rapsearch -q "${read1}" -d ../db/rapsearch/refseq_bav \
+            -o "${id}_R1.txt" -e 1.0e-5 -z "${task.cpus}"
+        rapsearch -q "${read2}" -d ../db/rapsearch/refseq_bav \
+            -o "${id}_R2.txt" -e 1.0e-5 -z "${task.cpus}"
+        """
+}
+
+process salmon {
+    publishDir "../results/salmon", mode: "copy"
+
+    input:
+        set val(id), file(read1), file(read2) from read_pairs_salmon
+
+    output:
+        file("${id}/quant.sf") into salmon_output
+
+    script:
+        """
+        salmon quant -i ../db/salmon/refseq_bav \
+          -1 "${read1}" -2 "${read2}" -o ${id}
+        """
+}
+
+process sourmash {
+    publishDir "../results/sourmash", mode: "copy"
+
+    input:
+        set val(id), file(read1), file(read2) from read_pairs_sourmash
+
+    output:
+        file("*.txt") into sourmash_output
+        file("*_sum.tab") into sourmash_sum
+
+    script:
+        """
+        sourmash compute -p "${task.cpus}" --scaled 1000 \
+            -k 31 "${id}*.fastq" --merge "${id}" -o "${id}-reads.sig"
+
+        sourmash lca classify --db ../db/sourmash/refseq_bav \
+        --query "${id}-reads.sig" -o "${id}.txt"
+
+        sourmash lca summarize --db ../db/sourmash/refseq_bav \
+        --query "${id}-reads.sig" -o "${id}_sum.tab"
         """
 }
