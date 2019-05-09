@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y procps && apt-get clean -y
 
 COPY classifiers_benchmark.yml /
 RUN conda env create -f /classifiers_benchmark.yml && conda clean -a
+RUN git clone https://github.com/HadrienG/2019_classifiers_benchmark repo
 ENV PATH /opt/conda/envs/benchmark/bin:$PATH
 
 WORKDIR /mnt/proj

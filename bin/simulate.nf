@@ -15,7 +15,7 @@ process create_datasets {
 
     script:
         """
-        python select_genomes.py -n "${abundance}" --seed \
+        python3 /repo/bin/select_genomes.py -n "${abundance}" --seed "${iteration}" \
             --output "${abundance}_${iteration}.fna.gz"
         """
 }
