@@ -4,4 +4,4 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - kraken=1.1
+  - kraken=1.1.1
