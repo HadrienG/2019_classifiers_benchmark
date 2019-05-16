@@ -13,15 +13,37 @@ process taxonomy {
         file("taxadb/names.dmp") into names
         file("taxadb/nodes.dmp") into nodes
         file("taxadb/nucl_gb.accession2taxid.gz") into nucl_gb
+        file("taxadb/nucl_wgs.accession2taxid.gz") into nucl_wgs
         file("taxadb/prot.accession2taxid.gz") into prot
         // file("taxadb.sqlite") into taxadb
     
     script:
-    """
-    taxadb download -t full -f -o taxadb
-    # don't need the db right away.
-    # taxadb create --fast -i taxadb -n taxadb.sqlite
-    """
+        """
+        taxadb download -t full -f -o taxadb
+        # don't need the db right away.
+        # taxadb create --fast -i taxadb -n taxadb.sqlite
+        """
+}
+
+process decompress {
+    input:
+        val(db) from params.db
+        file(genomes) from file(params.genomic)
+        file(proteins) from file(params.protein)
+
+    output:
+        file("${db}.fna.gz") into genomic_gz
+        file("${db}.fna") into genomic
+        file("${db}.faa.gz") into protein_gz
+        file("${db}.faa") into protein
+    
+    script:
+        """
+        cat "${genomes}"/*.fna.gz > "${db}.fna.gz"
+        gzip -dc "${db}".fna.gz > "${db}.fna"
+        cat "${proteins}"/*.faa.gz > "${db}.faa.gz"
+        gzip -dc "${db}".faa.gz > "${db}.faa"
+        """
 }
 
 process blast {
@@ -29,16 +51,14 @@ process blast {
 
     input:
         val(db) from params.db
-        file(genomes) from file(params.genomic)
+        file(genomic)
     
     output:
         file("${db}.n*") into blast_refseq_bav
     
     script:
         """
-        cat "${genomes}"/*.fna.gz > "${db}".fna.gz
-        gzip -d "${db}".fna.gz
-        makeblastdb -in "${db}".fna -dbtype nucl -out "${db}"
+        makeblastdb -in "${genomic}" -dbtype nucl -out "${db}"
         """
 }
 
@@ -47,21 +67,20 @@ process centrifuge {
 
     input:
         val(db) from params.db
-        file(genomes) from file(params.genomic)
+        file(genomic)
         file(nucl) from nucl_gb
+        file(nodes) from nodes
+        file(names) from names
     
     output:
         file("${db}*.cf") into centrifuge_refseq_bav
     
     script:
         """
-        cat "${genomes}"/*.fna.gz > "${db}".fna.gz
-        gzip -d "${db}".fna.gz
-        centrifuge-download -o taxonomy taxonomy
         gzip -f -d "${nucl}"
         centrifuge-build -p "${task.cpus}" --conversion-table nucl_gb.accession2taxid \
-            --taxonomy-tree taxonomy/nodes.dmp --name-table taxonomy/names.dmp \
-            "${db}".fna "${db}"
+            --taxonomy-tree "${nodes}" --name-table "${names}" \
+            "${genomic}" "${db}"
         """
 }
 
@@ -70,7 +89,7 @@ process diamond {
 
     input:
         val(db) from params.db
-        file(proteins) from file(params.protein)
+        file(protein_gz)
         file(nodes) from nodes
         file(prot) from prot
     
@@ -79,9 +98,8 @@ process diamond {
     
     script:
         """
-        cat "${proteins}"/*.faa.gz > "${db}".faa.gz
-        diamond makedb -p "${task.cpus}" --in "${db}".faa.gz --db "${db}" \
-            --taxonmap "${prot}" --taxonnodes "${nodes}"
+        diamond makedb -p "${task.cpus}" --in "${protein_gz}" \
+            --db "${db}" --taxonmap "${prot}" --taxonnodes "${nodes}"
         """
 }
 
@@ -90,8 +108,8 @@ process kaiju {
 
     input:
         val(db) from params.db
-        file(proteins) from file(params.protein)
-        file(nucl_gb) from nucl_gb
+        file(protein)
+        file(prot) from prot
         file(nodes) from nodes
 
     
@@ -100,50 +118,59 @@ process kaiju {
     
     script:
         """
-        zcat "${proteins}"/*.faa.gz > proteins.faa
-        convertNR -t "${nodes}" -g "${nucl_gb}" -i proteins.faa \
-            -a -o proteins.fasta
+        gzip -f -d "${prot}"
+        convertNR -t "${nodes}" -g prot.accession2taxid \
+            -i "${protein}" -a -o proteins.fasta
         mkbwt -n "${task.cpus}" -a ACDEFGHIKLMNPQRSTVWY -o ${db} proteins.faa
         mkfmi ${db}
         """
 }
 
-// waiting for the NCBI taxonomy
-// process kraken {
-//     publishDir "../db/kraken", mode: "copy"
+process kraken {
+    publishDir "../db/kraken", mode: "copy"
 
-//     input:
-//     val(db) from params.db
-//     file(genomes) from file(params.genomic)
+    input:
+    val(db) from params.db
+    file(genomic)
+    file(nucl_gb) from nucl_gb
+    file(nucl_wgs) from nucl_wgs
+    file(nodes) from nodes
+    file(names) from names
 
-//     output:
-//     file("${db}") into kraken_refseq_bav
+    output:
+    file("${db}") into kraken_refseq_bav
 
-//     script:
-//     """
-//     kraken-build --download-taxonomy --db "${db}"
-//     find "${genomes}" -name '*.fna.gz' -print0 |\
-//         xargs -0 -I{} -n1 kraken-build --add-to-library {} --db "${db}"
-//     kraken-build --threads "${task.cpus}" --build --db "${db}"
-//     kraken-build --clean --db "${db}"
-//     """
-// }
+    script:
+        """
+        mkdir -p "${db}/taxonomy" "${db}/library"
+        cp "${nucl_gb}" "${nucl_wgs}" "${nodes}" "${names}" \
+            "${db}/taxonomy/"
+        kraken-build --add-to-library "${genomic}" --db "${db}"
+        kraken-build --threads "${task.cpus}" --build --db "${db}"
+        kraken-build --clean --db "${db}"
+        """
+}
 
 process kraken2 {
     publishDir "../db/kraken2", mode: "copy"
 
     input:
     val(db) from params.db
-    file(genomes) from file(params.genomic)
+    file(genomic)
+    file(nucl_gb) from nucl_gb
+    file(nucl_wgs) from nucl_wgs
+    file(nodes) from nodes
+    file(names) from names
 
     output:
     file("${db}") into kraken2_refseq_bav
 
     script:
     """
-    kraken2-build --download-taxonomy --db "${db}"
-    find "${genomes}" -name '*.fna.gz' -print0 |\
-        xargs -0 -I{} -n1 kraken-build --add-to-library {} --db "${db}"
+    mkdir -p "${db}/taxonomy" "${db}/library"
+    cp "${nucl_gb}" "${nucl_wgs}" "${nodes}" "${names}" "${db}/taxonomy/"
+    gzip -f -d "${db}/taxonomy/"*.gz
+    kraken2-build --add-to-library "${genomic}" --db "${db}"
     kraken2-build --threads "${task.cpus}" --build --db "${db}"
     kraken2-build --clean --db "${db}"
     """
@@ -173,15 +200,14 @@ process mmseqs2 {
 
     input:
         val(db) from params.db
-        file(genomes) from file(params.genomic)
+        file(genomic)
     
     output:
         file("${db}") into mmseqs2_refseq_bav
     
     script:
         """
-        zcat "${genomes}"/*.fna.gz > genomes.fna
-        mmseqs createdb genomes.fna "${db}"
+        mmseqs createdb "${genomic}" "${db}"
         """
 }
 
@@ -190,15 +216,14 @@ process paladin {
 
     input:
         val(db) from params.db
-        file(proteins) from file(params.protein)
+        file(protein_gz)
     
     output:
         file("${db}.*") into paladin_refseq_bav
 
     script:
         """
-        cat "${proteins}"/*.faa.gz > "${db}"
-        paladin index -r3 "${db}"
+        paladin index -r3 "${protein_gz}"
         """
 }
 
@@ -207,15 +232,14 @@ process rapsearch {
 
     input:
         val(db) from params.db
-        file(proteins) from file(params.protein)
+        file(protein)
     
     output:
         file("${db}") into rapsearch_refseq_bav
     
     script:
         """
-        zcat "${proteins}"/*.faa.gz > "${db}".faa
-        prerapsearch -d "${db}".faa -n "${db}"
+        prerapsearch -d "${protein}" -n "${db}"
         """
 }
 
@@ -224,15 +248,14 @@ publishDir "../db/salmon", mode: "copy"
 
     input:
         val(db) from params.db
-        file(genomes) from file(params.genomic)
+        file(genomic)
     
     output:
         file("${db}") into salmon_refseq_bav
     
     script:
         """
-        zcat "${genomes}"/*.fna.gz > genomes.fna
-        salmon index -p "${task.cpus}" -t genomes.fna -i "${db}"
+        salmon index -p "${task.cpus}" -t ${genomic} -i "${db}"
         """
 }
 
@@ -241,16 +264,14 @@ publishDir "../db/sourmash", mode: "copy"
 
     input:
         val(db) from params.db
-        file(genomes) from file(params.genomic)
+        file(genomic)
     
     output:
-        file("${db}") into sourmash_refseq_bav
+        file("${db}.fna.sig") into sourmash_refseq_bav
     
     script:
         """
-        zcat "${genomes}"/*.fna.gz > genomes.fna
         sourmash compute -p "${task.cpus}" --scaled 1000 \
-            -k 31 genomes.fna --singleton
-        mv genomes.fna.sig "${db}"
+            -k 31 "${genomic}" --singleton
         """
 }

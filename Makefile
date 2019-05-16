@@ -15,6 +15,7 @@ clean:
 	rm -rf .nextflow.log*
 	cd bin && rm -rf .nextflow.log*
 	cd bin && rm -rf work/
+	cd results && rm -rf *.html.?
 
 docker-build:
 	cd dockerfiles && docker build -t hadrieng/classifiers_benchmark:0.1.0 -f classifiers_benchmark.Dockerfile .
