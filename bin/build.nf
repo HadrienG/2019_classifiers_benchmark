@@ -20,8 +20,7 @@ process taxonomy {
     script:
         """
         taxadb download -t full -f -o taxadb
-        # don't need the db right away.
-        # taxadb create --fast -i taxadb -n taxadb.sqlite
+        taxadb create --fast -i taxadb -n taxadb.sqlite
         """
 }
 
