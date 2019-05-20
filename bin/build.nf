@@ -39,9 +39,9 @@ process decompress {
     script:
         """
         cat "${genomes}"/*.fna.gz > "${db}.fna.gz"
-        gzip -dc "${db}".fna.gz > "${db}.fna"
+        gzip -dc "${db}.fna.gz" > "${db}.fna"
         cat "${proteins}"/*.faa.gz > "${db}.faa.gz"
-        gzip -dc "${db}".faa.gz > "${db}.faa"
+        gzip -dc "${db}.faa.gz" > "${db}.faa"
         """
 }
 
