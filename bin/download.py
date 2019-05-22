@@ -16,7 +16,7 @@ class BadRequestError(Exception):
     """Exception to raise when a http request does not return 200
     """
 
-    def __init__(self, software):
+    def __init__(self, url, status_code):
         super().__init__(f"{url} returned {status_code}")
 
 
