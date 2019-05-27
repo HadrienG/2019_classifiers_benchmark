@@ -135,7 +135,7 @@ def cleanup(name):
     files = [genomic, protein, genbank]
     for f in files:
         try:
-            os.remove(file)
+            os.remove(f)
         except FileNotFoundError as e:
             continue
 
