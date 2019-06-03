@@ -242,21 +242,22 @@ process rapsearch {
         """
 }
 
-process salmon {
-publishDir "../db/salmon", mode: "copy"
+// requires more than 512G of RAM to build. Giving up.
+// process salmon {
+// publishDir "../db/salmon", mode: "copy"
 
-    input:
-        val(db) from params.db
-        file(genomic)
+//     input:
+//         val(db) from params.db
+//         file(genomic)
     
-    output:
-        file("${db}") into salmon_refseq_bav
+//     output:
+//         file("${db}") into salmon_refseq_bav
     
-    script:
-        """
-        salmon index -p "${task.cpus}" -t ${genomic} -i "${db}"
-        """
-}
+//     script:
+//         """
+//         salmon index -p "${task.cpus}" -t ${genomic} -i "${db}"
+//         """
+// }
 
 process sourmash {
 publishDir "../db/sourmash", mode: "copy"
