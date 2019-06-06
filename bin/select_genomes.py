@@ -63,6 +63,11 @@ def main():
         help="random seed to use. Default = 1"
     )
     parser.add_argument(
+        "--genomes",
+        default="db/genomic",
+        help="input directory"
+    )
+    parser.add_argument(
         "--output",
         help="output file name",
         required=True
@@ -70,7 +75,7 @@ def main():
     args = parser.parse_args()
     random.seed(args.seed)
 
-    genomes = random_datasets(args.n, "../db/genomic")
+    genomes = random_datasets(args.n, args.genomes)
     concatenate(genomes, args.output)
 
 

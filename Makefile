@@ -18,7 +18,7 @@ clean:
 	cd results && rm -rf *.html.?
 
 docker-build:
-	cd dockerfiles && docker build -t hadrieng/classifiers_benchmark:0.1.0 -f classifiers_benchmark.Dockerfile .
+	cd dockerfiles && docker build -t hadrieng/classifiers_benchmark:0.1.1 -f classifiers_benchmark.Dockerfile .
 	cd dockerfiles && docker build -t hadrieng/blast:2.7.1 -f blast.Dockerfile .
 	cd dockerfiles && docker build -t hadrieng/centrifuge:1.0.4_beta -f centrifuge.Dockerfile .
 	cd dockerfiles && docker build -t hadrieng/diamond:0.9.24 -f diamond.Dockerfile .
@@ -34,7 +34,7 @@ docker-build:
 	cd dockerfiles && docker build -t hadrieng/sourmash:2.0.0 -f sourmash.Dockerfile .
 
 docker-push:
-	docker push hadrieng/classifiers_benchmark:0.1.0
+	docker push hadrieng/classifiers_benchmark:0.1.1
 	docker push hadrieng/blast:2.7.1
 	docker push hadrieng/centrifuge:1.0.4_beta
 	docker push hadrieng/diamond:0.9.24

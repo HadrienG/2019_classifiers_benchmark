@@ -4,10 +4,13 @@ abundance = Channel.from( 10, 50, 200 )
 platform = Channel.from ( "miseq", "novaseq" )
 iteration = Channel.from ( 1, 2, 3, 4, 5 )
 
+params.genomic = "../db/genomic"
+
 process create_datasets {
     publishDir "../results/reads", mode: "copy"
 
     input:
+        file(genomes) from file(params.genomic)
         val abundance
         val iteration
     output:
@@ -16,7 +19,7 @@ process create_datasets {
     script:
         """
         python3 /repo/bin/select_genomes.py -n "${abundance}" --seed "${iteration}" \
-            --output "${abundance}_${iteration}.fna.gz"
+            --genomes "${genomes}" --output "${abundance}_${iteration}.fna.gz"
         """
 }
 
