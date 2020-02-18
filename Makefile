@@ -49,4 +49,20 @@ docker-push:
 	docker push hadrieng/salmon:0.13.1
 	docker push hadrieng/sourmash:2.0.0
 
+docker-pull:
+	docker pull hadrieng/classifiers_benchmark:0.1.1
+	docker pull hadrieng/blast:2.7.1
+	docker pull hadrieng/centrifuge:1.0.4_beta
+	docker pull hadrieng/diamond:0.9.24
+	docker pull hadrieng/kaiju:1.6.3
+	docker pull hadrieng/kraken:1.1.1
+	docker pull hadrieng/kraken2:2.0.8_beta
+	docker pull hadrieng/krakenuniq:0.5.7
+	docker pull hadrieng/kslam:1.0
+	docker pull hadrieng/mmseqs2:8.fac81
+	docker pull hadrieng/paladin:1.4.4
+	docker pull hadrieng/rapsearch:2.24
+	docker pull hadrieng/salmon:0.13.1
+	docker pull hadrieng/sourmash:2.0.0
+
 docker: docker-build docker-push
