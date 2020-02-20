@@ -1,6 +1,13 @@
 #!/usr/bin/env nextflow
 nextflow.preview.dsl = 2
 
+params.genomic = "../db/genomic"
+params.protein = "../db/protein"
+params.genbank = "../db/genbank"
+
+params.db = "refseq_bav"
+params.output = "../db"
+
 include taxonomy from './modules/taxonomy' params(output: params.output)
 include decompress from './modules/taxonomy'
 
@@ -15,13 +22,6 @@ include build as build_mmseqs2 from './modules/mmseqs2' params(output: params.ou
 include build as build_paladin from './modules/paladin' params(output: params.output)
 include build as build_rapsearch from './modules/rapsearch' params(output: params.output)
 include build as build_sourmash from './modules/sourmash' params(output: params.output)
-
-params.genomic = "../db/genomic"
-params.protein = "../db/protein"
-params.genbank = "../db/genbank"
-
-params.db = "refseq_bav"
-params.output = "../db"
 
 worklow {
     taxonomy()
