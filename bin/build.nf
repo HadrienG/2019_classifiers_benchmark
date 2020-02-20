@@ -25,7 +25,7 @@ include build as build_sourmash from './modules/sourmash' params(output: params.
 
 workflow {
     taxonomy()
-    decompress(params.db, params.genomic, params.protein)
+    decompress(params.db, file(params.genomic), file(params.protein))
 
     names = taxonomy.out.names
     nodes = taxonomy.out.nodes
