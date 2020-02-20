@@ -23,7 +23,7 @@ include build as build_paladin from './modules/paladin' params(output: params.ou
 include build as build_rapsearch from './modules/rapsearch' params(output: params.output)
 include build as build_sourmash from './modules/sourmash' params(output: params.output)
 
-worklow {
+workflow {
     taxonomy()
     decompress(params.db, params.genomic, params.protein)
 
