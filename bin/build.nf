@@ -39,7 +39,7 @@ workflow {
     protein_gz = decompress.out.protein_gz
 
     build_blast(params.db, genomic)
-    build_centrifuge(params.db, genomic, nuclt_gb, nodes, names)
+    build_centrifuge(params.db, genomic, nucl_gb, nodes, names)
     build_diamond(params.db, protein_gz, nodes, prot)
     build_kaiju(params.db, protein, prot, nodes)
     build_kraken(params.db, genomic, nucl_gb, nucl_wgs, nodes, names)
