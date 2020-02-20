@@ -1,12 +1,12 @@
 process taxonomy {
     publishDir "${params.output}/taxonomy", mode: "copy"
     output:
-        file("taxadb/names.dmp", emit: names)
-        file("taxadb/nodes.dmp", emit: nodes)
-        file("taxadb/nucl_gb.accession2taxid.gz", emit: nucl_gb)
-        file("taxadb/nucl_wgs.accession2taxid.gz", emit: nucl_wgs)
-        file("taxadb/prot.accession2taxid.gz", emit: prot)
-        file("taxadb.sqlite", emit: taxadb)
+        path("taxadb/names.dmp", emit: names)
+        path("taxadb/nodes.dmp", emit: nodes)
+        path("taxadb/nucl_gb.accession2taxid.gz", emit: nucl_gb)
+        path("taxadb/nucl_wgs.accession2taxid.gz", emit: nucl_wgs)
+        path("taxadb/prot.accession2taxid.gz", emit: prot)
+        path("taxadb.sqlite", emit: taxadb)
     script:
         """
         taxadb download -t full -f -o taxadb
@@ -20,10 +20,10 @@ process decompress {
         file(genomes)
         file(proteins)
     output:
-        file("${db}.fna.gz", emit: genomic_gz)
-        file("${db}.fna", emit: genomic)
-        file("${db}.faa.gz", emit: protein_gz)
-        file("${db}.faa", emit: protein)
+        path("${db}.fna.gz", emit: genomic_gz)
+        path("${db}.fna", emit: genomic)
+        path("${db}.faa.gz", emit: protein_gz)
+        path("${db}.faa", emit: protein)
     script:
         """
         cat "${genomes}"/*.fna.gz > "${db}.fna.gz"
