@@ -1,256 +1,52 @@
 #!/usr/bin/env nextflow
+nextflow.preview.dsl = 2
 
 params.genomic = "../db/genomic"
 params.protein = "../db/protein"
 params.genbank = "../db/genbank"
 
 params.db = "refseq_bav"
+params.output = "../db"
 
-process taxonomy {
-    publishDir "../db/taxonomy", mode: "copy"
+include taxonomy from './modules/taxonomy' params(output: params.output)
+include decompress from './modules/taxonomy'
 
-    output:
-        file("taxadb/names.dmp") into names
-        file("taxadb/nodes.dmp") into nodes
-        file("taxadb/nucl_gb.accession2taxid.gz") into nucl_gb
-        file("taxadb/prot.accession2taxid.gz") into prot
-        // file("taxadb.sqlite") into taxadb
-    
-    script:
-    """
-    taxadb download -t full -f -o taxadb
-    # don't need the db right away.
-    # taxadb create --fast -i taxadb -n taxadb.sqlite
-    """
-}
+include build as build_blast from './modules/blast' params(output: params.output)
+include build as build_centrifuge from './modules/centrifuge' params(output: params.output)
+include build as build_diamond from './modules/diamond' params(output: params.output)
+include build as build_kaiju from './modules/kaiju' params(output: params.output)
+include build as build_kraken from './modules/kraken' params(output: params.output)
+include build as build_kraken2 from './modules/kraken2' params(output: params.output)
+include build as build_kslam from './modules/kslam' params(output: params.output)
+include build as build_mmseqs2 from './modules/mmseqs2' params(output: params.output)
+include build as build_paladin from './modules/paladin' params(output: params.output)
+include build as build_rapsearch from './modules/rapsearch' params(output: params.output)
+include build as build_sourmash from './modules/sourmash' params(output: params.output)
 
-process blast {
-    publishDir "../db/blast", mode: "copy"
+workflow {
+    taxonomy()
+    decompress(params.db, file(params.genomic), file(params.protein))
 
-    input:
-        val(db) from params.db
-        file(genomes) from file(params.genomic)
-    
-    output:
-        file("${db}.n*") into blast_refseq_bav
-    
-    script:
-        """
-        cat "${genomes}"/*.fna.gz > "${db}".fna.gz
-        gzip -d "${db}".fna.gz
-        makeblastdb -in "${db}".fna -dbtype nucl -out "${db}"
-        """
-}
+    names = taxonomy.out.names
+    nodes = taxonomy.out.nodes
+    nucl_gb = taxonomy.out.nucl_gb
+    nucl_wgs = taxonomy.out.nucl_wgs
+    prot = taxonomy.out.prot
 
-process centrifuge {
-    publishDir "../db/centrifuge", mode: "copy"
+    genbank = file(params.genbank)
+    genomic = decompress.out.genomic
+    protein = decompress.out.protein
+    protein_gz = decompress.out.protein_gz
 
-    input:
-        val(db) from params.db
-        file(genomes) from file(params.genomic)
-        file(nucl) from nucl_gb
-    
-    output:
-        file("${db}*.cf") into centrifuge_refseq_bav
-    
-    script:
-        """
-        cat "${genomes}"/*.fna.gz > "${db}".fna.gz
-        gzip -d "${db}".fna.gz
-        centrifuge-download -o taxonomy taxonomy
-        gzip -f -d "${nucl}"
-        centrifuge-build -p "${task.cpus}" --conversion-table nucl_gb.accession2taxid \
-            --taxonomy-tree taxonomy/nodes.dmp --name-table taxonomy/names.dmp \
-            "${db}".fna "${db}"
-        """
-}
-
-process diamond {
-    publishDir "../db/diamond", mode: "copy"
-
-    input:
-        val(db) from params.db
-        file(proteins) from file(params.protein)
-        file(nodes) from nodes
-        file(prot) from prot
-    
-    output:
-        file("${db}*.dmnd") into diamond_refseq_bav        
-    
-    script:
-        """
-        cat "${proteins}"/*.faa.gz > "${db}".faa.gz
-        diamond makedb -p "${task.cpus}" --in "${db}".faa.gz --db "${db}" \
-            --taxonmap "${prot}" --taxonnodes "${nodes}"
-        """
-}
-
-process kaiju {
-    publishDir "../db/kaiju", mode: "copy"
-
-    input:
-        val(db) from params.db
-        file(proteins) from file(params.protein)
-        file(nucl_gb) from nucl_gb
-        file(nodes) from nodes
-
-    
-    output:
-        file("${db}*.fmi") into kaiju_refseq_bav    
-    
-    script:
-        """
-        zcat "${proteins}"/*.faa.gz > proteins.faa
-        convertNR -t "${nodes}" -g "${nucl_gb}" -i proteins.faa \
-            -a -o proteins.fasta
-        mkbwt -n "${task.cpus}" -a ACDEFGHIKLMNPQRSTVWY -o ${db} proteins.faa
-        mkfmi ${db}
-        """
-}
-
-// waiting for the NCBI taxonomy
-// process kraken {
-//     publishDir "../db/kraken", mode: "copy"
-
-//     input:
-//     val(db) from params.db
-//     file(genomes) from file(params.genomic)
-
-//     output:
-//     file("${db}") into kraken_refseq_bav
-
-//     script:
-//     """
-//     kraken-build --download-taxonomy --db "${db}"
-//     find "${genomes}" -name '*.fna.gz' -print0 |\
-//         xargs -0 -I{} -n1 kraken-build --add-to-library {} --db "${db}"
-//     kraken-build --threads "${task.cpus}" --build --db "${db}"
-//     kraken-build --clean --db "${db}"
-//     """
-// }
-
-process kraken2 {
-    publishDir "../db/kraken2", mode: "copy"
-
-    input:
-    val(db) from params.db
-    file(genomes) from file(params.genomic)
-
-    output:
-    file("${db}") into kraken2_refseq_bav
-
-    script:
-    """
-    kraken2-build --download-taxonomy --db "${db}"
-    find "${genomes}" -name '*.fna.gz' -print0 |\
-        xargs -0 -I{} -n1 kraken-build --add-to-library {} --db "${db}"
-    kraken2-build --threads "${task.cpus}" --build --db "${db}"
-    kraken2-build --clean --db "${db}"
-    """
-}
-
-process kslam {
-    publishDir "../db/kslam", mode: "copy"
-
-    input:
-        val(db) from params.db
-        file(nodes) from nodes
-        file(names) from names
-        file(genomes) from file(params.genbank)
-
-    output:
-        file("${db}") into kslam_refseq_bav
-
-    script:
-        """
-        SLAM --parse-taxonomy "${names}" "${nodes}" --output-file taxDB
-        SLAM --output-file "${db}" --parse-genbank "${genomes}"/*.gbff.gz
-        """
-}
-
-process mmseqs2 {
-    publishDir "../db/mmseqs2", mode: "copy"
-
-    input:
-        val(db) from params.db
-        file(genomes) from file(params.genomic)
-    
-    output:
-        file("${db}") into mmseqs2_refseq_bav
-    
-    script:
-        """
-        zcat "${genomes}"/*.fna.gz > genomes.fna
-        mmseqs createdb genomes.fna "${db}"
-        """
-}
-
-process paladin {
-    publishDir "../db/paladin", mode: "copy"
-
-    input:
-        val(db) from params.db
-        file(proteins) from file(params.protein)
-    
-    output:
-        file("${db}.*") into paladin_refseq_bav
-
-    script:
-        """
-        cat "${proteins}"/*.faa.gz > "${db}"
-        paladin index -r3 "${db}"
-        """
-}
-
-process rapsearch {
-    publishDir "../db/rapsearch", mode: "copy"
-
-    input:
-        val(db) from params.db
-        file(proteins) from file(params.protein)
-    
-    output:
-        file("${db}") into rapsearch_refseq_bav
-    
-    script:
-        """
-        zcat "${proteins}"/*.faa.gz > "${db}".faa
-        prerapsearch -d "${db}".faa -n "${db}"
-        """
-}
-
-process salmon {
-publishDir "../db/salmon", mode: "copy"
-
-    input:
-        val(db) from params.db
-        file(genomes) from file(params.genomic)
-    
-    output:
-        file("${db}") into salmon_refseq_bav
-    
-    script:
-        """
-        zcat "${genomes}"/*.fna.gz > genomes.fna
-        salmon index -p "${task.cpus}" -t genomes.fna -i "${db}"
-        """
-}
-
-process sourmash {
-publishDir "../db/sourmash", mode: "copy"
-
-    input:
-        val(db) from params.db
-        file(genomes) from file(params.genomic)
-    
-    output:
-        file("${db}") into sourmash_refseq_bav
-    
-    script:
-        """
-        zcat "${genomes}"/*.fna.gz > genomes.fna
-        sourmash compute -p "${task.cpus}" --scaled 1000 \
-            -k 31 genomes.fna --singleton
-        mv genomes.fna.sig "${db}"
-        """
+    build_blast(params.db, genomic)
+    build_centrifuge(params.db, genomic, nucl_gb, nodes, names)
+    build_diamond(params.db, protein_gz, nodes, prot)
+    build_kaiju(params.db, protein, prot, nodes)
+    build_kraken(params.db, genomic, nucl_gb, nucl_wgs, nodes, names)
+    build_kraken2(params.db, genomic, nucl_gb, nucl_wgs, nodes, names)
+    build_kslam(params.db, nodes, names, genbank)
+    build_mmseqs2(params.db, genomic)
+    build_paladin(params.db, protein_gz)
+    build_rapsearch(params.db, protein)
+    build_sourmash(params.db, genomic)
 }

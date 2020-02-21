@@ -22,7 +22,7 @@
 | Mmseqs2    | 8.fac81    | No             | No  | GPL3    |
 | Paladin    | 1.4.4      | No             | No  | MIT     |
 | Rapsearch  | 2.24       | No             | No  | GPL3    |
-| Salmon     | 0.13.1     | No             | No  | GPL3    |
+| Salmon     | 0.13.1     | No\*           | No  | GPL3    |
 | Sourmash   | 2.0.0      | No             | No  | BSD     |
 
 All the software have their docker image, using the same base and installed via `conda`
@@ -33,22 +33,27 @@ All the software have their docker image, using the same base and installed via 
 
 As of `2019-04-16` There are 13193 complete bacterial genomes, 8583 viral genomes and 283 archaeal genomes available in RefSeq complete genomes, for a total of 16877 genomes.
 
-To download them, use `make download`
-
-They'll be placed in `db`
+To download refseq, use `make download`, which will placed in the `db` directory
 
 A summary, `assemblies.csv` will also be created with the columns "taxid", "species_taxid", "accession" and "organism_name"
 
 ### Build
 
-`make build`
+To build the databases, use `make build`.
+The databases are in `db/$software_name`
 
 ## Datasets
 
-A number of datasets will be simulated using [InSilicoSeq](https://github.com/HadrienG/InSilicoSeq)
+The following datasets are simulated using [InSilicoSeq](https://github.com/HadrienG/InSilicoSeq)
 
-- [ ] Agree on the abundance of the datasets (both low and high?)
-- [ ] Agree on the number of datasets (10 -> 100?)
+| Abundance | Platform       | N datasets | N reads |
+| --------- | -------------- | ---------- | ------- |
+| 10        | MiSeq, Novaseq | 5          | 5M      |
+| 50        | MiSeq, Novaseq | 5          | 5M      |
+| 200       | MiSeq, Novaseq | 5          | 5M      |
+
+for a total of 30 datasets.
+Genomes in theses datasets were selected at random from refseq.
 
 ## Benchmarking
 

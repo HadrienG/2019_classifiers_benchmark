@@ -8,14 +8,38 @@ import logging
 
 import requests
 
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
+
+class BadRequestError(Exception):
+    """Exception to raise when a http request does not return 200
+    """
+
+    def __init__(self, url, status_code):
+        super().__init__(f"{url} returned {status_code}")
+
 
 def download(url, output_file, chunk_size=1024, append=False):
     """download an url
     """
+    session = requests.Session()
+    retry = Retry(
+        total=3,
+        backoff_factor=1,
+        status_forcelist=[502, 503, 504]
+    )
+    session.mount('https://', HTTPAdapter(max_retries=retry))
+
     if url.startswith("ftp://"):  # requests doesnt support ftp
         url = url.replace("ftp://", "https://")
     if url:
-        request = requests.get(url, stream=True)
+        # first we check the header for a valid response
+        response = requests.head(url)
+        if response.status_code == 200:
+            request = requests.get(url, stream=True, timeout=300)
+        else:
+            raise BadRequestError(url, response.status_code)
 
     mode = "ab" if append is True else "wb"
     with open(output_file, mode) as f:
@@ -47,9 +71,11 @@ def listing():
 
     for summary in summaries:
         url = f"{refseq}/{summary}"
-        logger.info(f"Downloading {url}")
-        download(url, output_file, append=True)
-
+        logger.warning(f"Downloading {url}")
+        try:
+            download(url, output_file, append=True)
+        except BadRequestError as e:
+            logger.error(f"Could not download {url}")
     return output_file
 
 
@@ -74,11 +100,16 @@ def download_assemblies(assembly_list):
                 protein = f"{ftp_dir_path}/{name}_protein.faa.gz"
                 genbank = f"{ftp_dir_path}/{name}_genomic.gbff.gz"
 
-                logger.info(f"Downloading files for {name}")
-                download(genomic, f"db/genomic/{name}_genomic.fna.gz")
-                download(protein, f"db/protein/{name}_protein.faa.gz")
-                download(genbank, f"db/genbank/{name}_genomic.gbff.gz")
-                summary(line, "db/assemblies.csv")
+                logger.warning(f"Downloading files for {name}")
+                try:
+                    download(genomic, f"db/genomic/{name}_genomic.fna.gz")
+                    download(protein, f"db/protein/{name}_protein.faa.gz")
+                    download(genbank, f"db/genbank/{name}_genomic.gbff.gz")
+                    summary(line, "db/assemblies.csv")
+                except BadRequestError as e:
+                    logger.warning(f"Could not download {name}")
+                    logger.warning("Skipping organism")
+                    cleanup(name)
 
 
 def summary(line, output_file):
@@ -93,6 +124,20 @@ def summary(line, output_file):
             line.split("\t")[0],
             line.split("\t")[7]]
         writer.writerow(row)
+
+
+def cleanup(name):
+    """if a file has failed to download, remove all the organism's files
+    """
+    genomic = f"db/genomic/{name}_genomic.fna.gz"
+    protein = f"db/protein/{name}_protein.faa.gz"
+    genbank = f"db/genbank/{name}_genomic.gbff.gz"
+    files = [genomic, protein, genbank]
+    for f in files:
+        try:
+            os.remove(f)
+        except FileNotFoundError as e:
+            continue
 
 
 def main():
