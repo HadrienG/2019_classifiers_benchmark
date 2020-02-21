@@ -14,6 +14,7 @@ process build {
         mkdir -p "${db}/taxonomy" "${db}/library"
         cp "${nucl_gb}" "${nucl_wgs}" "${nodes}" "${names}" \
             "${db}/taxonomy/"
+        gzip -f -d "${db}/taxonomy/"*.gz
         kraken-build --add-to-library "${genomic}" --db "${db}"
         kraken-build --threads "${task.cpus}" --build --db "${db}"
         kraken-build --clean --db "${db}"
