@@ -19,3 +19,18 @@ process build {
         kraken2-build --clean --db "${db}"
         """
 }
+
+process run {
+    publishDir "${db}/kraken2", mode: "copy"
+    input:
+        tuple val(id), file(reads)
+    output:
+        file("kraken2*.txt")
+    script:
+        """
+        kraken2 --db "${db}/kraken2/refseq_bav" --output "kraken2_${id}.txt" \
+            --fastq-input --threads "${task.cpus}" \
+            --report "kraken2_${id}_report.txt"
+            --paired "${reads}"
+        """
+}
