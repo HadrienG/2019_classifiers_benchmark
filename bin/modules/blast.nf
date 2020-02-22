@@ -1,4 +1,5 @@
 process build {
+    label "blast"
     publishDir "${params.output}/blast", mode: "copy"
     input:
         val(db)
@@ -12,6 +13,7 @@ process build {
 }
 
 process run {
+    label "blast"
     publishDir "${params.output}/blast", mode: "copy"
     input:
         file(db)

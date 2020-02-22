@@ -1,4 +1,5 @@
 process build {
+    label "paladin"
     publishDir "${params.output}/paladin", mode: "copy"
     input:
         val(db)
@@ -12,6 +13,7 @@ process build {
 }
 
 process run {
+    label "paladin"
     publishDir "${params.output}/paladin", mode: "copy"
     input:
         tuple val(id), file(reads)

@@ -1,4 +1,5 @@
 process build {
+    label "mmseqs2"
     publishDir "${params.output}/mmseqs2", mode: "copy"
     input:
         val(db)
@@ -12,6 +13,7 @@ process build {
 }
 
 process run {
+    label "mmseqs2"
     publishDir "${params.output}/mmseqs2", mode: "copy"
     input:
         tuple val(id), file(reads)

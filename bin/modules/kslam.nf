@@ -1,4 +1,5 @@
 process build {
+    label "kslam"
     publishDir "${params.output}/kslam", mode: "copy"
     input:
         val(db)
@@ -15,6 +16,7 @@ process build {
 }
 
 process run {
+    label "kslam"
     publishDir "${params.output}/kslam", mode: "copy"
     input:
         tuple val(id), file(reads)

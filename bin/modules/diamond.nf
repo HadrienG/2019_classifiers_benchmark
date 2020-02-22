@@ -1,4 +1,5 @@
 process build {
+    label "diamond"
     publishDir "${params.output}/diamond", mode: "copy"
     input:
         val(db)
@@ -15,6 +16,7 @@ process build {
 }
 
 process run {
+    label "diamond"
     publishDir "${params.output}/diamond", mode: "copy"
     input:
         file(db)

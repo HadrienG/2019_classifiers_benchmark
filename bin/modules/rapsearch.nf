@@ -1,4 +1,5 @@
 process build {
+    label "rapsearch"
     publishDir "${params.output}/rapsearch", mode: "copy"
     input:
         val(db)
@@ -12,6 +13,7 @@ process build {
 }
 
 process run {
+    label "rapsearch"
     publishDir "${params.output}/rapsearch", mode: "copy"
     input:
         tuple val(id), file(reads)

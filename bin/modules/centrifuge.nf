@@ -1,4 +1,5 @@
 process build {
+    label "centrifuge"
     publishDir "${params.output}/centrifuge", mode: "copy"
     input:
         val(db)
@@ -18,6 +19,7 @@ process build {
 }
 
 process run {
+    label "centrifuge"
     publishDir "${params.output}/centrifuge", mode: "copy"
     input:
         file(db)

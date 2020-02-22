@@ -1,4 +1,5 @@
 process build {
+    label "kaiju"
     publishDir "${params.output}/kaiju", mode: "copy"
     input:
         val(db)
@@ -18,6 +19,7 @@ process build {
 }
 
 process run {
+    label "kaiju"
     publishDir "${params.output}/kaiju", mode: "copy"
     input:
         file(db)

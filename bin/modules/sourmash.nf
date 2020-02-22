@@ -1,13 +1,11 @@
 process build {
-publishDir "${params.output}/sourmash", mode: "copy"
-
+    label "sourmash"
+    publishDir "${params.output}/sourmash", mode: "copy"
     input:
         val(db)
         file(genomic)
-    
     output:
         file("${db}.fna.sig")
-    
     script:
         """
         sourmash compute -p "${task.cpus}" --scaled 1000 \
@@ -16,6 +14,7 @@ publishDir "${params.output}/sourmash", mode: "copy"
 }
 
 process run {
+    label "sourmash"
     publishDir "${params.output}/sourmash", mode: "copy"
     input:
         tuple val(id), file(reads)
