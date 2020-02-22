@@ -16,9 +16,10 @@ process run {
     label "rapsearch"
     publishDir "${params.output}/rapsearch", mode: "copy"
     input:
+        file(db)
         tuple val(id), file(reads)
     output:
-        file("*.txt")
+        file("rapsearch*.txt")
     script:
         """
         rapsearch -q "${reads[0]}" -d "${db}/rapsearch/refseq_bav" \

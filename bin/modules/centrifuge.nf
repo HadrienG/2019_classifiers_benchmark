@@ -25,7 +25,6 @@ process run {
         file(db)
         tuple val(id), file(reads)
     output:
-        file("centrifuge_*_report.txt")
         file("centrifuge_*.txt")
     script:
         """

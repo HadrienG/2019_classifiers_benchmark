@@ -19,6 +19,7 @@ process run {
     label "kslam"
     publishDir "${params.output}/kslam", mode: "copy"
     input:
+        file(db)
         tuple val(id), file(reads)
     output:
         file("kslam*.txt") into kslam_output

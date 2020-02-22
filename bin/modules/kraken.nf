@@ -26,6 +26,7 @@ process run {
     label "kraken"
     publishDir "${params.output}/kraken", mode: "copy"
     input:
+        file(db)
         tuple val(id), file(reads)
     output:
         file("kraken*.txt")

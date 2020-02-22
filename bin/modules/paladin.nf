@@ -16,6 +16,7 @@ process run {
     label "paladin"
     publishDir "${params.output}/paladin", mode: "copy"
     input:
+        file(db)
         tuple val(id), file(reads)
     output:
         file("paladin*.tsv")

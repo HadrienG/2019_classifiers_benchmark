@@ -17,6 +17,7 @@ process run {
     label "sourmash"
     publishDir "${params.output}/sourmash", mode: "copy"
     input:
+        file(db)
         tuple val(id), file(reads)
     output:
         file("sourmash*.txt")

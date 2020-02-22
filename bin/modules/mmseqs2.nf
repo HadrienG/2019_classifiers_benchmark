@@ -16,6 +16,7 @@ process run {
     label "mmseqs2"
     publishDir "${params.output}/mmseqs2", mode: "copy"
     input:
+        file(db)
         tuple val(id), file(reads)
     output:
         file("mmseqs2*.txt") into mmseqs2_output
