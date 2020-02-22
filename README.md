@@ -11,19 +11,21 @@
 
 | Classifier | Version    | Database built | Run | License |
 | ---------- | ---------- | -------------- | --- | ------- |
-| Blast      | 2.7.1      | No             | No  | GPL2    |
-| Centrifuge | 1.0.4_beta | No             | No  | GPL3    |
-| Diamond    | 0.9.24     | No             | No  | BSD     |
-| Kaiju      | 1.6.3      | No             | No  | GPL3    |
-| Kraken     | 1.1        | No             | No  | GPL3    |
-| Kraken     | 2.0.7_beta | No             | No  | GPL3    |
-| Krakenuniq | 0.5.7      | No             | No  | GPL3    |
-| K-slam     | 1.0        | No             | No  | GPL3    |
-| Mmseqs2    | 8.fac81    | No             | No  | GPL3    |
-| Paladin    | 1.4.4      | No             | No  | MIT     |
-| Rapsearch  | 2.24       | No             | No  | GPL3    |
-| Salmon     | 0.13.1     | No\*           | No  | GPL3    |
-| Sourmash   | 2.0.0      | No             | No  | BSD     |
+| Blast      | 2.7.1      | Yes             | No  | GPL2    |
+| Centrifuge | 1.0.4_beta | Yes             | No  | GPL3    |
+| Diamond    | 0.9.24     | Yes             | No  | BSD     |
+| Kaiju      | 1.6.3      | Yes             | No  | GPL3    |
+| Kraken     | 1.1        | Yes             | No  | GPL3    |
+| Kraken     | 2.0.7_beta | Yes             | No  | GPL3    |
+| Krakenuniq | 0.5.7      | Yes             | No  | GPL3    |
+| K-slam     | 1.0        | Yes             | No  | GPL3    |
+| Mmseqs2    | 8.fac81    | Yes             | No  | GPL3    |
+| Paladin    | 1.4.4      | Yes             | No  | MIT     |
+| Rapsearch  | 2.24       | Yes             | No  | GPL3    |
+| Salmon     | 0.13.1     | No\*            | No  | GPL3    |
+| Sourmash   | 2.0.0      | Yes             | No  | BSD     |
+
+\* insufficient RAM
 
 All the software have their docker image, using the same base and installed via `conda`
 
