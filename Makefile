@@ -7,6 +7,9 @@ download:
 build:
 	cd bin && nextflow run build.nf -resume -with-report ../results/build.html
 
+run:
+	cd bin && nextflow run run.nf -resume -with-report ../results/run.html
+
 simulate:
 	cd bin && nextflow run simulate.nf -resume -with-report ../results/simulation.html
 
