@@ -12,7 +12,7 @@ process build {
         """
 }
 
-process run {
+process Run {
     label "rapsearch"
     publishDir "${params.output}/rapsearch", mode: "copy"
     input:

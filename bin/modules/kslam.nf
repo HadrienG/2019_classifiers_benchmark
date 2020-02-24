@@ -15,7 +15,7 @@ process build {
         """
 }
 
-process run {
+process Run {
     label "kslam"
     publishDir "${params.output}/kslam", mode: "copy"
     input:

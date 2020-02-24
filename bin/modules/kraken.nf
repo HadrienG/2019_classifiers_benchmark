@@ -22,7 +22,7 @@ process build {
         """
 }
 
-process run {
+process Run {
     label "kraken"
     publishDir "${params.output}/kraken", mode: "copy"
     input:

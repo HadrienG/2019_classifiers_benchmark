@@ -12,7 +12,7 @@ process build {
         """
 }
 
-process run {
+process Run {
     label "blast"
     publishDir "${params.output}/blast", mode: "copy"
     input:

@@ -12,7 +12,7 @@ process build {
         """
 }
 
-process run {
+process Run {
     label "paladin"
     publishDir "${params.output}/paladin", mode: "copy"
     input:

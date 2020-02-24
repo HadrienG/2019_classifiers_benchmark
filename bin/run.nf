@@ -5,17 +5,17 @@ params.db = "../db"
 params.data = "../results/reads"
 params.output = "../results/classification/raw"
 
-include run as run_blast from './modules/blast' params(output: params.output)
-include run as run_centrifuge from './modules/centrifuge' params(output: params.output)
-include run as run_diamond from './modules/diamond' params(output: params.output)
-include run as run_kaiju from './modules/kaiju' params(output: params.output)
-include run as run_kraken from './modules/kraken' params(output: params.output)
-include run as run_kraken2 from './modules/kraken2' params(output: params.output)
-include run as run_kslam from './modules/kslam' params(output: params.output)
-include run as run_mmseqs2 from './modules/mmseqs2' params(output: params.output)
-include run as run_paladin from './modules/paladin' params(output: params.output)
-include run as run_rapsearch from './modules/rapsearch' params(output: params.output)
-include run as run_sourmash from './modules/sourmash' params(output: params.output)
+include Run as run_blast from './modules/blast' params(output: params.output)
+include Run as run_centrifuge from './modules/centrifuge' params(output: params.output)
+include Run as run_diamond from './modules/diamond' params(output: params.output)
+include Run as run_kaiju from './modules/kaiju' params(output: params.output)
+include Run as run_kraken from './modules/kraken' params(output: params.output)
+include Run as run_kraken2 from './modules/kraken2' params(output: params.output)
+include Run as run_kslam from './modules/kslam' params(output: params.output)
+include Run as run_mmseqs2 from './modules/mmseqs2' params(output: params.output)
+include Run as run_paladin from './modules/paladin' params(output: params.output)
+include Run as run_rapsearch from './modules/rapsearch' params(output: params.output)
+include Run as run_sourmash from './modules/sourmash' params(output: params.output)
 
 
 Channel

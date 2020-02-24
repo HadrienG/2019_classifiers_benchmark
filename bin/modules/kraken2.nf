@@ -21,7 +21,7 @@ process build {
         """
 }
 
-process run {
+process Run {
     label "kraken2"
     publishDir "${db}/kraken2", mode: "copy"
     input:

@@ -13,7 +13,7 @@ process build {
         """
 }
 
-process run {
+process Run {
     label "sourmash"
     publishDir "${params.output}/sourmash", mode: "copy"
     input:

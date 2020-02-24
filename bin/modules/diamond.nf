@@ -15,7 +15,7 @@ process build {
         """
 }
 
-process run {
+process Run {
     label "diamond"
     publishDir "${params.output}/diamond", mode: "copy"
     input:

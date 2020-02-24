@@ -18,7 +18,7 @@ process build {
         """
 }
 
-process run {
+process Run {
     label "kaiju"
     publishDir "${params.output}/kaiju", mode: "copy"
     input:

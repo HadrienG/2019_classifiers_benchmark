@@ -12,7 +12,7 @@ process build {
         """
 }
 
-process run {
+process Run {
     label "mmseqs2"
     publishDir "${params.output}/mmseqs2", mode: "copy"
     input:

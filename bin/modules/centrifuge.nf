@@ -18,7 +18,7 @@ process build {
         """
 }
 
-process run {
+process Run {
     label "centrifuge"
     publishDir "${params.output}/centrifuge", mode: "copy"
     input:
