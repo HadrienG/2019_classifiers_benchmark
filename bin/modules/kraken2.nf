@@ -34,6 +34,6 @@ process Run {
         kraken2 --db "${db}/kraken2/refseq_bav" --output "kraken2_${id}.txt" \
             --fastq-input --threads "${task.cpus}" \
             --report "kraken2_${id}_report.txt"
-            --paired "${reads}"
+            --paired ${reads}
         """
 }
