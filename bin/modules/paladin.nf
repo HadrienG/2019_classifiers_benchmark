@@ -23,8 +23,8 @@ process Run {
     script:
         """
         paladin align -f 100 -t "${task.cpus}" -o "paladin_${id}_R1" \
-            ../db/paladin/refseq_bav.gz "${reads[0]}"
+            "${db}/paladin/refseq_bav.gz" "${reads[0]}"
         paladin align -f 100 -t "${task.cpus}" -o "paladin_${id}_R2" \
-            ../db/paladin/refseq_bav.gz "${reads[1]}"
+            "${db}paladin/refseq_bav.gz" "${reads[1]}"
         """
 }
