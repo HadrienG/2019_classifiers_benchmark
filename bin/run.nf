@@ -19,20 +19,22 @@ include Run as run_sourmash from './modules/sourmash' params(output: params.outp
 
 
 Channel
-    .fromFilePairs( params.data + '*_{R1,R2}.fastq', size: 2, flat: true)
-    .ifEmpty { error "Cannot find any reads matching: ${params.data}" }
+    .fromFilePairs(params.data)
+    .dump()
     .set{reads}
 
 workflow {
-    run_blast(params.db, reads)
-    run_centrifuge(params.db, reads)
-    run_diamond(params.db, reads)
-    run_kaiju(params.db, reads)
-    run_kraken(params.db, reads)
-    run_kraken2(params.db, reads)
-    run_kslam(params.db, reads)
-    run_mmseqs2(params.db, reads)
-    run_paladin(params.db, reads)
-    run_rapsearch(params.db, reads)
-    run_sourmash(params.db, reads)
+    db = file(params.db)
+
+    run_blast(db, reads)
+    run_centrifuge(db, reads)
+    run_diamond(db, reads)
+    run_kaiju(db, reads)
+    run_kraken(db, reads)
+    run_kraken2(db, reads)
+    run_kslam(db, reads)
+    run_mmseqs2(db, reads)
+    run_paladin(db, reads)
+    run_rapsearch(db, reads)
+    run_sourmash(db, reads)
 }
