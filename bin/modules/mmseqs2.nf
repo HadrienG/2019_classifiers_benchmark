@@ -19,7 +19,7 @@ process Run {
         file(db)
         tuple val(id), file(reads)
     output:
-        file("mmseqs2*.txt") into mmseqs2_output
+        file("mmseqs2*.txt")
     script:
         """
         mkdir tmp1

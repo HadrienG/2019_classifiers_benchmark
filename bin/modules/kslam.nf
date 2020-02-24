@@ -22,7 +22,7 @@ process Run {
         file(db)
         tuple val(id), file(reads)
     output:
-        file("kslam*.txt") into kslam_output
+        file("kslam*.txt")
     script:
         """
         SLAM --db "${db}/kslam/refseq_bav" --output-file "kslam_${id}.txt" \
