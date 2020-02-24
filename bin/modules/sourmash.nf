@@ -25,9 +25,9 @@ process Run {
         """
         sourmash compute -p "${task.cpus}" --scaled 1000 \
             -k 31 ${reads} --merge "${id}" -o "${id}_reads.sig"
-        sourmash lca classify --db "${db}/sourmash/refseq_bav" \
+        sourmash lca classify --db "${db}/sourmash/refseq_bav.fna.sig" \
         --query "${id}_reads.sig" -o "sourmash_${id}.txt"
-        sourmash lca summarize --db "${db}/sourmash/refseq_bav" \
+        sourmash lca summarize --db "${db}/sourmash/refseq_bav.fna.sig" \
         --query "${id}_reads.sig" -o "sourmash_${id}_sum.txt"
         """
 }
