@@ -2,7 +2,7 @@
 nextflow.preview.dsl = 2
 
 params.db = "../db"
-params.data = "../results/reads"
+params.data = "../results/reads/"
 params.output = "../results/classification/raw"
 
 include Run as run_blast from './modules/blast' params(output: params.output)
