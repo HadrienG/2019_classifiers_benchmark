@@ -28,7 +28,7 @@ process Run {
         file("centrifuge_*.txt")
     script:
         """
-        centrifuge -x "${db}centrifuge/refseq_bav" -1 "${reads[0]}" \
+        centrifuge -x "${db}/centrifuge/refseq_bav" -1 "${reads[0]}" \
              -2 "${reads[1]}" --report-file "centrifuge_${id}_report.txt" \
              -S "centrifuge_${id}.txt" -p "${task.cpus}"
         """
