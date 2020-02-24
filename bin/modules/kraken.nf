@@ -1,4 +1,5 @@
 process build {
+    label "kraken"
     publishDir "${params.output}/kraken", mode: "copy"
     input:
         val(db)
@@ -18,5 +19,23 @@ process build {
         kraken-build --add-to-library "${genomic}" --db "${db}"
         kraken-build --threads "${task.cpus}" --build --db "${db}"
         kraken-build --clean --db "${db}"
+        """
+}
+
+process run {
+    label "kraken"
+    publishDir "${params.output}/kraken", mode: "copy"
+    input:
+        file(db)
+        tuple val(id), file(reads)
+    output:
+        file("kraken*.txt")
+    script:
+        """
+        kraken --db "${db}/kraken/refseq_bav" --output "kraken_${id}.txt" \
+            --fastq-input --threads "${task.cpus}" \
+            --paired "${reads}"
+        kraken-report --db "${db}/kraken/refseq_bav" "kraken_${id}.txt" \
+            > "kraken_${id}_report.txt"
         """
 }
