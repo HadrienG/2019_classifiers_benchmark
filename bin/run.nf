@@ -5,7 +5,7 @@ params.db = "../db"
 params.data = "../results/reads/*_R{1,2}.fastq"
 params.output = "../results/classification/raw"
 
-// include Run as run_blast from './modules/blast' params(output: params.output)
+include Run as run_blast from './modules/blast' params(output: params.output)
 include Run as run_centrifuge from './modules/centrifuge' params(output: params.output)
 include Run as run_diamond from './modules/diamond' params(output: params.output)
 include Run as run_kaiju from './modules/kaiju' params(output: params.output)
@@ -26,7 +26,7 @@ Channel
 workflow {
     db = file(params.db)
 
-    // run_blast(db, reads)
+    run_blast(db, reads)
     run_centrifuge(db, reads)
     run_diamond(db, reads)
     run_kaiju(db, reads)
