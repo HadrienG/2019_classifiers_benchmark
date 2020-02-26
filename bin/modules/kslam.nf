@@ -11,7 +11,7 @@ process build {
         file("database")
     script:
         """
-        gzip -d "${genomes}"/*.gbff.gz
+        gzip -dk "${genomes}"/*.gbff.gz
         SLAM --parse-taxonomy "${names}" "${nodes}" --output-file taxDB
         SLAM --output-file database --parse-genbank "${genomes}"/*.gbff
         """
