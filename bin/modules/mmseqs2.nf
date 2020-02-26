@@ -5,7 +5,7 @@ process build {
         val(db)
         file(genomic)
     output:
-        file("${db}")
+        file("${db}*")
     script:
         """
         mmseqs createdb "${genomic}" "${db}"
