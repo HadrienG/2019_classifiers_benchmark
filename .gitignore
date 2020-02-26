@@ -26,5 +26,11 @@ db/assembly_summaries.txt
 # reads
 results/reads
 
+# old html reports
+results/build.html.?
+results/run.html.?
+
 # nextflow
 .nextflow
+bin/work
+bin/.nexflow*
