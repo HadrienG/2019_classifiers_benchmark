@@ -7,11 +7,13 @@ process build {
         file(names)
         file(genomes)
     output:
-        file("${db}")
+        file("taxDB")
+        file("database")
     script:
         """
+        gzid -d "${genomes}"/*.gbff.gz
         SLAM --parse-taxonomy "${names}" "${nodes}" --output-file taxDB
-        SLAM --output-file "${db}" --parse-genbank "${genomes}"/*.gbff.gz
+        SLAM --output-file database --parse-genbank "${genomes}"/*.gbff
         """
 }
 
@@ -25,7 +27,7 @@ process Run {
         file("kslam*.txt")
     script:
         """
-        SLAM --db "${db}/kslam/refseq_bav" --output-file "kslam_${id}.txt" \
+        SLAM --db "${db}/kslam" --output-file "kslam_${id}.txt" \
             "${reads}"
         """
 }
