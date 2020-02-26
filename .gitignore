@@ -33,4 +33,4 @@ results/run.html.?
 # nextflow
 .nextflow
 bin/work
-bin/.nexflow*
+bin/.nextflow*
