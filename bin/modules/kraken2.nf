@@ -23,7 +23,7 @@ process build {
 
 process Run {
     label "kraken2"
-    publishDir "${db}/kraken2", mode: "copy"
+    publishDir "${params.output}/kraken2", mode: "copy"
     input:
         file(db)
         tuple val(id), file(reads)
