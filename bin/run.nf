@@ -13,8 +13,7 @@ include Run as run_kraken from './modules/kraken' params(output: params.output)
 include Run as run_kraken2 from './modules/kraken2' params(output: params.output)
 include Run as run_kslam from './modules/kslam' params(output: params.output)
 include Run as run_mmseqs2 from './modules/mmseqs2' params(output: params.output)
-include Run as run_paladin from './modules/paladin' params(output: params.output)
-// include Run as run_rapsearch from './modules/rapsearch' params(output: params.output)
+include Run as run_rapsearch from './modules/rapsearch' params(output: params.output)
 // include Run as run_sourmash from './modules/sourmash' params(output: params.output)
 
 
@@ -34,7 +33,6 @@ workflow {
     run_kraken2(db, reads)
     run_kslam(db, reads)
     run_mmseqs2(db, reads)
-    run_paladin(db, reads)
-    // run_rapsearch(db, reads)
+    run_rapsearch(db, reads)
     // run_sourmash(db, reads)
 }
